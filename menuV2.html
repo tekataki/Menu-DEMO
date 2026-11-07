@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f3ede1">
+<title>Menú · La Casona</title>
+<meta name="description" content="Menú digital de La Casona. Pide desde tu mesa o en línea, a domicilio o para recoger.">
+<link rel="preload" href="fonts/MEETU.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ManEater.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/menu-v2.css">
+<link rel="stylesheet" href="css/mesa-stamp.css">
+<link rel="stylesheet" href="css/polished-ui.css">
+<script src="js/v2/polished-ui.js" defer></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap">
+<script src="js/v2/mesa-stamp.js" defer></script>
+<script src="js/vendor/supabase-js-2.57.4.js" defer></script>
+<script src="js/cloud.js" defer></script>
+<script src="js/v2/config.js" defer></script>
+<script src="js/v2/menu-data.js" defer></script>
+<script src="js/v2/menu-v2.js" defer></script>
+<script src="js/v2/patio.js" defer></script>
+</head>
+<body>
+
+<!-- Filtros "boil" (7 fps): tres variaciones de ruido que se alternan por CSS. -->
+<svg class="defs" aria-hidden="true" focusable="false" width="0" height="0">
+  <defs>
+    <filter id="boil-0" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G"/></filter>
+    <filter id="boil-1" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="17" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G"/></filter>
+    <filter id="boil-2" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="41" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G"/></filter>
+    <!-- Doodles dibujados a mano -->
+    <symbol id="d-scribble" viewBox="0 0 220 24"><path d="M3 15c22-9 40-10 58-4s33 7 52 0 38-9 56-3 30 6 48-1" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M14 20c30-4 70-5 112-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".7"/></symbol>
+    <symbol id="d-star" viewBox="0 0 40 40"><path d="M20 3c1 9 3 14 17 17-14 2-16 7-17 17-2-10-4-15-17-17 13-3 15-8 17-17z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></symbol>
+    <symbol id="d-arrow" viewBox="0 0 120 70"><path d="M6 10c20 40 55 52 98 40" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><path d="M90 38l15 12-17 8" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="d-blob" viewBox="0 0 200 160"><path d="M38 28c28-24 92-26 128-6s38 70 18 98-80 40-120 26S2 108 6 76s4-30 32-48z" fill="currentColor"/></symbol>
+    <symbol id="d-ring" viewBox="0 0 120 100"><path d="M64 8C30 6 8 26 8 50s22 44 56 42 50-22 48-44S92 6 54 12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+    <symbol id="d-sprig" viewBox="0 0 60 90"><path d="M30 88C29 60 30 32 34 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M31 70c-12-2-20-10-22-20 12 0 20 8 22 20zM32 50c10-3 17-11 18-21-10 1-17 9-18 21zM32 32c-9-3-14-10-14-18 9 1 14 8 14 18z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></symbol>
+    <symbol id="d-sun" viewBox="0 0 60 60"><circle cx="30" cy="30" r="10" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M30 6v8M30 46v8M6 30h8M46 30h8M13 13l6 6M41 41l6 6M47 13l-6 6M19 41l-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="d-steam" viewBox="0 0 50 60"><path d="M12 56c-8-10 8-16 0-28s6-18 2-26M26 56c-8-10 8-16 0-28s6-18 2-26M40 56c-8-10 8-16 0-28s6-18 2-26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="d-table" viewBox="0 0 64 48"><path d="M6 14h52M10 14l-2 30M54 14l2 30M18 14v-4M46 14v-4" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M24 10c0-6 16-6 16 0" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+    <symbol id="d-moto" viewBox="0 0 80 50"><circle cx="16" cy="36" r="10" fill="none" stroke="currentColor" stroke-width="2.6"/><circle cx="64" cy="36" r="10" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M16 36l14-14h18l6 14M48 22l-4-10h-8M54 36H34M58 22h10" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="d-qr" viewBox="0 0 48 48"><path d="M6 6h14v14H6zM28 6h14v14H28zM6 28h14v14H6z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><path d="M11 11h4v4h-4zM33 11h4v4h-4zM11 33h4v4h-4z" fill="currentColor"/><path d="M28 28h5v5M42 28v6M28 38v4h6M38 38h4v4" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+    <symbol id="d-bag" viewBox="0 0 60 64"><path d="M10 20h40l-3 40H13z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><path d="M21 26v-10c0-12 18-12 18 0v10" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+    <!-- Patio: bugambilia, hojas, macetas, golondrina -->
+    <!-- Estilo risografía: relleno de color desfasado + línea de tinta -->
+    <symbol id="d-bloom" viewBox="-13 -13 26 26"><g transform="translate(1 1.2)" style="fill:var(--bloom,#d2457f)"><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z"/><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z" transform="rotate(120)"/><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z" transform="rotate(240)"/></g><g fill="none" style="stroke:var(--ink,#1d1813)" stroke-width="1.1" stroke-linejoin="round"><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z"/><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z" transform="rotate(120)"/><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z" transform="rotate(240)"/><path d="M0-2.5v-5M2.2 1.3l4.3 2.5M-2.2 1.3l-4.3 2.5" stroke-width=".7" opacity=".6" stroke-linecap="round"/></g><circle r="2" style="fill:var(--bloom-c,#f6e3a1);stroke:var(--ink,#1d1813)" stroke-width=".7"/></symbol>
+    <symbol id="d-bloom2" viewBox="-13 -13 26 26"><g transform="translate(1 1.2)" style="fill:var(--bloom-2,#ec8fae)"><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z"/><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z" transform="rotate(120)"/><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z" transform="rotate(240)"/></g><g fill="none" style="stroke:var(--ink,#1d1813)" stroke-width="1.1" stroke-linejoin="round"><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z"/><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z" transform="rotate(120)"/><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z" transform="rotate(240)"/></g><circle r="2" style="fill:var(--bloom-c,#f6e3a1);stroke:var(--ink,#1d1813)" stroke-width=".7"/></symbol>
+    <symbol id="d-leaf" viewBox="0 0 26 13"><path d="M1 6.5C7 0 17 0 25 6.5 17 13 7 13 1 6.5Z" transform="translate(.8 1)" style="fill:var(--leaf,#97b07a)"/><path d="M1 6.5C7 0 17 0 25 6.5 17 13 7 13 1 6.5Z" fill="none" style="stroke:var(--ink,#1d1813)" stroke-width="1.1" stroke-linejoin="round"/><path d="M3.5 6.5C10 5.7 16 5.7 21.5 6.5M9 6.2l3-2.4M14 6.1l3-2.2M11 6.6l2.6 2" fill="none" style="stroke:var(--ink,#1d1813)" stroke-width=".7" stroke-linecap="round" opacity=".55"/></symbol>
+    <symbol id="d-leaf2" viewBox="0 0 26 13"><path d="M1 6.5C8 2 18 2 25 6.5 18 11 8 11 1 6.5Z" transform="translate(.8 1)" style="fill:var(--leaf-2,#5f8452)"/><path d="M1 6.5C8 2 18 2 25 6.5 18 11 8 11 1 6.5Z" fill="none" style="stroke:var(--ink,#1d1813)" stroke-width="1.1" stroke-linejoin="round"/><path d="M3.5 6.5h18" fill="none" style="stroke:var(--ink,#1d1813)" stroke-width=".7" stroke-linecap="round" opacity=".55"/></symbol>
+    <symbol id="d-daisy" viewBox="-12 -12 24 24"><g transform="translate(.8 1)" style="fill:var(--daisy,#fffaf0)"><ellipse cy="-5.8" rx="2.5" ry="5"/><ellipse cy="-5.8" rx="2.5" ry="5" transform="rotate(45)"/><ellipse cy="-5.8" rx="2.5" ry="5" transform="rotate(90)"/><ellipse cy="-5.8" rx="2.5" ry="5" transform="rotate(135)"/><ellipse cy="-5.8" rx="2.5" ry="5" transform="rotate(180)"/><ellipse cy="-5.8" rx="2.5" ry="5" transform="rotate(225)"/><ellipse cy="-5.8" rx="2.5" ry="5" transform="rotate(270)"/><ellipse cy="-5.8" rx="2.5" ry="5" transform="rotate(315)"/></g><g fill="none" style="stroke:var(--ink,#1d1813)" stroke-width=".9"><ellipse cy="-5.8" rx="2.5" ry="5"/><ellipse cy="-5.8" rx="2.5" ry="5" transform="rotate(45)"/><ellipse cy="-5.8" rx="2.5" ry="5" transform="rotate(90)"/><ellipse cy="-5.8" rx="2.5" ry="5" transform="rotate(135)"/><ellipse cy="-5.8" rx="2.5" ry="5" transform="rotate(180)"/><ellipse cy="-5.8" rx="2.5" ry="5" transform="rotate(225)"/><ellipse cy="-5.8" rx="2.5" ry="5" transform="rotate(270)"/><ellipse cy="-5.8" rx="2.5" ry="5" transform="rotate(315)"/></g><circle r="3.3" style="fill:var(--mostaza,#d39b36);stroke:var(--ink,#1d1813)" stroke-width=".9"/><circle cx="-1" cy="-1" r=".8" style="fill:var(--ink,#1d1813)" opacity=".5"/></symbol>
+    <symbol id="d-bud" viewBox="0 0 12 18"><path d="M6 14.5C2 10.5 2 5 6 1c4 4 4 9.5 0 13.5Z" transform="translate(.7 .8)" style="fill:var(--bloom,#d2457f)"/><path d="M6 14.5C2 10.5 2 5 6 1c4 4 4 9.5 0 13.5Z" fill="none" style="stroke:var(--ink,#1d1813)" stroke-width=".9" stroke-linejoin="round"/><path d="M6 14.5V18M3.4 12.6 6 14.5l2.6-1.9" fill="none" style="stroke:var(--ink,#1d1813)" stroke-width=".9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="d-berry" viewBox="-7 -7 14 14"><g transform="translate(.6 .7)" style="fill:var(--pot,#b4532a)"><circle cx="-2.5" cy="1.6" r="2.5"/><circle cx="2.5" cy="1.6" r="2.5"/><circle cy="-2.6" r="2.5"/></g><g fill="none" style="stroke:var(--ink,#1d1813)" stroke-width=".8"><circle cx="-2.5" cy="1.6" r="2.5"/><circle cx="2.5" cy="1.6" r="2.5"/><circle cy="-2.6" r="2.5"/></g></symbol>
+    <symbol id="d-pot" viewBox="0 0 120 60"><path d="M16 2h88v13H16z" style="fill:var(--pot,#b4532a);stroke:var(--ink,#1d1813)" stroke-width="2.2" stroke-linejoin="round"/><path d="M23 15h74l-9 43H32z" style="fill:var(--pot,#b4532a);stroke:var(--ink,#1d1813)" stroke-width="2.2" stroke-linejoin="round"/><path d="M27 30h66" fill="none" style="stroke:var(--paper,#f3ede1)" stroke-width="2" stroke-dasharray="2 5" stroke-linecap="round"/><path d="M31 40l6 6 6-6 6 6 6-6 6 6 6-6 6 6 6-6 6 6" fill="none" style="stroke:var(--paper,#f3ede1)" stroke-width="1.6" stroke-linejoin="round" opacity=".85"/></symbol>
+    <symbol id="d-agave" viewBox="0 0 120 150"><g style="fill:var(--leaf2,#a9bb92);stroke:var(--ink,#1d1813)" stroke-width="2" stroke-linejoin="round"><path d="M58 94C44 72 26 60 4 54c22 2 42 14 58 38z"/><path d="M62 94c14-22 32-34 54-40-22 2-42 14-58 38z"/><path d="M56 94C48 66 38 44 24 22c18 18 30 42 38 70z"/><path d="M64 94c8-28 18-50 32-72-18 18-30 42-38 70z"/><path d="M57 94C55 62 56 34 60 6c4 28 5 56 3 88z"/></g><use href="#d-pot" x="0" y="90" width="120" height="60"/></symbol>
+    <symbol id="d-bush" viewBox="0 0 120 150"><path d="M22 96C6 84 12 58 32 60c0-20 26-30 38-14 14-12 40-2 32 20 16 6 12 30-6 30z" style="fill:var(--leaf,#9db27f);stroke:var(--ink,#1d1813)" stroke-width="2" stroke-linejoin="round"/><path d="M40 74c6 4 12 4 18 0M66 66c6 4 12 4 18 0M50 88c6 3 12 3 18 0" fill="none" style="stroke:var(--ink,#1d1813)" stroke-width="1.4" stroke-linecap="round" opacity=".5"/><use href="#d-bloom" x="28" y="56" width="20" height="20"/><use href="#d-bloom" x="58" y="42" width="22" height="22"/><use href="#d-bloom" x="84" y="58" width="18" height="18"/><use href="#d-bloom" x="46" y="74" width="16" height="16"/><use href="#d-bloom" x="76" y="78" width="18" height="18"/><use href="#d-pot" x="0" y="90" width="120" height="60"/></symbol>
+    <symbol id="d-bird" viewBox="0 0 40 20"><path d="M2 7c8-4 14-2 18 5 4-7 10-9 18-5-8 0-13 3-18 10C15 10 10 7 2 7z" fill="currentColor"/><path d="M20 15l-3 4M20 15l3 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#menu">Saltar al menú</a>
+
+<header class="hero" id="inicio">
+  <div class="hero-title">
+    <!-- Patio (js/v2/patio.js): sombra de follaje en la pared y rama de entrada -->
+    <svg class="shade" aria-hidden="true" focusable="false"></svg>
+    <svg class="corner" aria-hidden="true" focusable="false"></svg>
+    <!-- Cielo: cambia con la hora (día · atardecer · noche) -->
+    <div class="sky" aria-hidden="true">
+      <svg class="sky-art sky-sun boil" viewBox="0 0 100 100">
+        <g class="sun-rays"><path d="M50 8v12M50 80v12M8 50h12M80 50h12M20 20l8.5 8.5M71.5 71.5L80 80M80 20l-8.5 8.5M28.5 71.5L20 80" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></g>
+        <circle class="sky-disc" cx="50" cy="50" r="17" stroke="currentColor" stroke-width="2.8"/>
+        <path d="M40 45a11 11 0 0 1 9-7" fill="none" stroke="#fff8e6" stroke-width="2.6" stroke-linecap="round"/>
+      </svg>
+      <svg class="sky-art sky-dusk boil" viewBox="0 0 100 100">
+        <defs><clipPath id="duskClip"><rect x="0" y="0" width="100" height="63"/></clipPath></defs>
+        <g class="dusk-rays"><path d="M50 16v10M24 28l7 7M76 28l-7 7M10 52h11M79 52h11" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></g>
+        <g clip-path="url(#duskClip)"><circle class="sky-disc dusk-sun" cx="50" cy="64" r="21" stroke="currentColor" stroke-width="2.8"/></g>
+        <path d="M4 64h92" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+        <path d="M18 73h64M32 82h36" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" opacity=".65"/>
+      </svg>
+      <svg class="sky-art sky-moon boil" viewBox="0 0 100 100">
+        <path class="sky-disc" d="M46.9 26A26 26 0 1 0 72.2 61.5 22 22 0 0 1 46.9 26Z" stroke="currentColor" stroke-width="2.8" stroke-linejoin="round"/>
+        <path d="M34 50a14 14 0 0 0 8 14" fill="none" stroke="#fffbe9" stroke-width="2.4" stroke-linecap="round" opacity=".9"/>
+        <g class="sky-stars" fill="currentColor"><path class="st st1" d="M80 14c.6 4 1.6 5 5 5.6-3.4.6-4.4 1.6-5 5.4-.6-3.8-1.6-4.8-5-5.4 3.4-.6 4.4-1.6 5-5.6z"/><path class="st st2" d="M88 46c.4 3 1.2 3.6 3.6 4-2.4.4-3.2 1-3.6 3.6-.4-2.6-1.2-3.2-3.6-3.6 2.4-.4 3.2-1 3.6-4z"/><path class="st st3" d="M18 18c.4 3 1.2 3.6 3.6 4-2.4.4-3.2 1-3.6 3.6-.4-2.6-1.2-3.2-3.6-3.6 2.4-.4 3.2-1 3.6-4z"/></g>
+      </svg>
+      <p class="sky-hi" id="skyHi">buenos días</p>
+    </div>
+    <div class="birds" aria-hidden="true">
+      <svg class="bird b1"><use href="#d-bird"/></svg><svg class="bird b2"><use href="#d-bird"/></svg><svg class="bird b3"><use href="#d-bird"/></svg>
+    </div>
+    <div class="petals" aria-hidden="true"></div>
+    <p class="hero-kicker"><span class="hero-q">¿Qué deseas</span> <span class="hero-q2">pedir hoy?<svg class="q-sprig" viewBox="0 0 60 60" aria-hidden="true"><path d="M8 56C14 40 22 28 36 16" class="stem" stroke-width="1.6"/><path d="M19 37c6-2 12 0 16 4" class="stem" stroke-width="1.3"/><use href="#d-leaf" width="18" height="9" transform="translate(14 45) rotate(-150) translate(0 -2.25)"/><use href="#d-leaf2" width="16" height="8" transform="translate(23 31) rotate(-10) translate(0 -2)"/><use href="#d-bloom2" x="29" y="35" width="14" height="14"/><use href="#d-daisy" x="26" y="3" width="22" height="22"/><use href="#d-bud" width="8" height="12" transform="translate(11 50) rotate(-70) translate(-4 -12)"/></svg></span></p>
+    <h1 class="hero-name">
+      <!-- El filete de "La" es un tallo con bugambilia que cuelga sobre "ona" -->
+      <span class="hero-la">La<svg class="la-stem" aria-hidden="true" focusable="false"></svg></span>
+      <span class="hero-casona" data-fit>Casona<svg class="c-bloom" aria-hidden="true" focusable="false"></svg><svg class="a-plant" aria-hidden="true" focusable="false"></svg></span>
+      <span class="flies" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+    </h1>
+    <svg class="doodle hero-star boil" aria-hidden="true"><use href="#d-star"/></svg>
+    <svg class="garland" aria-hidden="true" focusable="false"></svg>
+  </div>
+
+  <div class="hero-stage">
+    <figure class="hero-facade">
+      <img class="boil" src="assets/menu/fachada-colonial-footer.webp" width="2078" height="757" alt="Ilustración de la fachada colonial de La Casona" decoding="async" fetchpriority="high">
+      <svg class="ground" aria-hidden="true" focusable="false"></svg>
+      <svg class="hero-pot hero-pot--l boil" viewBox="0 0 120 150" aria-hidden="true"><use href="#d-bush"/></svg>
+      <svg class="hero-pot hero-pot--r boil" viewBox="0 0 120 150" aria-hidden="true"><use href="#d-agave"/></svg>
+    </figure>
+  </div>
+
+  <!-- Tarjeta de modo: la rellena JS según el QR (mesa) o pedido en línea -->
+  <section class="mode-card" id="modeCard" aria-live="polite"></section>
+</header>
+
+<nav class="index" id="indice" aria-labelledby="indiceTitle">
+  <div class="index-head">
+    <h2 id="indiceTitle" class="index-title">Índice</h2>
+    <p class="index-hint">14 categorías <svg class="doodle index-arrow boil" aria-hidden="true"><use href="#d-arrow"/></svg></p>
+  </div>
+  <ol class="index-grid" id="indexGrid"></ol>
+</nav>
+
+<nav class="catbar" id="catbar" aria-label="Categorías">
+  <div class="catbar-track" id="catbarTrack"></div>
+</nav>
+
+<main id="menu" class="menu" tabindex="-1">
+  <noscript><p class="noscript">Activa JavaScript para ver el menú y hacer tu pedido.</p></noscript>
+</main>
+
+<footer class="signoff">
+  <svg class="doodle signoff-ring boil" aria-hidden="true"><use href="#d-ring"/></svg>
+  <p class="signoff-script">Buen provecho</p>
+  <figure class="signoff-facade"><img class="boil" src="assets/menu/fachada-colonial-footer.webp" width="2078" height="757" alt="" loading="lazy" decoding="async"></figure>
+  <p class="signoff-phone" data-phone hidden></p>
+  <p class="signoff-small">La Casona · Precios en pesos mexicanos (MXN)</p>
+</footer>
+
+<!-- Barra inferior del pedido -->
+<div class="orderbar" id="orderbar" hidden>
+  <button class="orderbar-btn" id="orderbarBtn" type="button" aria-haspopup="dialog">
+    <span class="orderbar-count" id="orderbarCount">0</span>
+    <span class="orderbar-label"><span id="orderbarMode">Tu pedido</span><small id="orderbarItems">0 productos</small></span>
+    <span class="orderbar-total" id="orderbarTotal">$0</span>
+    <span class="orderbar-go" aria-hidden="true">Ver →</span>
+  </button>
+</div>
+
+<!-- Ficha de producto con opciones / extras -->
+<dialog class="sheet" id="itemSheet" aria-labelledby="itemSheetTitle">
+  <form method="dialog" class="sheet-inner" id="itemForm"></form>
+</dialog>
+
+<!-- Pedido + datos -->
+<dialog class="sheet sheet--cart" id="cartSheet" aria-labelledby="cartTitle">
+  <div class="sheet-inner" id="cartInner"></div>
+</dialog>
+
+<!-- Ticket final -->
+<dialog class="sheet sheet--ticket" id="ticketSheet" aria-labelledby="ticketTitle">
+  <div class="sheet-inner" id="ticketInner"></div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

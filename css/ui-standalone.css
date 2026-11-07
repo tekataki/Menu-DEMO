@@ -1,0 +1,76 @@
+/* Extracción de menu-v2.css: solo tarjetas de entrega y pasos. Sin rediseño. */
+@font-face{font-family:'Casona ManEater';src:url('../fonts/ManEater.woff2') format('woff2');font-display:swap}
+@font-face{font-family:'Barlow C';src:url('../fonts/BarlowCondensed-Regular.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Anton C';src:url('../fonts/Anton-Regular.ttf') format('truetype');font-display:swap}
+@font-face{font-family:'Nunito C';src:url('../fonts/Nunito-Variable.woff2') format('woff2');font-weight:200 1000;font-display:swap}
+:root{--paper:#f3ede1;--paper-2:#ebe2d0;--card:#faf6ee;--ink:#1d1813;--ink-2:#4a4137;--ink-3:#7c7062;--terra:#b4532a;--rosa:#e7b591;--sky-glow:rgba(239,198,108,.55);--bloom:#d2457f;--bloom-c:#f6e3a1;--leaf:#97b07a;--f-man:'Casona ManEater',Georgia,serif;--f-barlow:'Barlow C','Arial Narrow',Arial,sans-serif;--f-anton:'Anton C',Impact,'Arial Narrow',sans-serif;--f-ui:'Nunito C',system-ui,-apple-system,'Segoe UI',sans-serif;--frame:calc(1s / 7);color-scheme:light}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--card);color:var(--ink);font:400 18px/1.5 var(--f-ui);-webkit-font-smoothing:antialiased;font-synthesis:none}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+:focus-visible{outline:2.5px solid var(--terra);outline-offset:3px;border-radius:6px}
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+/* Solo espacio de trabajo alrededor del componente, sin recuadro añadido. */
+.standalone-stage{width:calc(100% - 36px);max-width:720px;margin:40px auto;padding:0}
+.ln{fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.ln-thin{stroke-width:1.6}.ln-paper{stroke:var(--card)}.ln-accent{stroke:var(--terra)}
+.fill-soft{fill:var(--paper-2)}.fill-paper{fill:var(--card)}.fill-accent{fill:var(--terra)}
+.doors{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,2vw,16px)}
+.door{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:12px;padding:12px 12px 14px;border:1.5px solid var(--ink);border-radius:clamp(90px,22vw,150px) clamp(90px,22vw,150px) 22px 22px;background:var(--paper);text-align:left;color:var(--ink);transition:background .2s,color .2s,translate .15s steps(2,end),box-shadow .15s steps(2,end)}
+.door:hover{translate:0 -3px;box-shadow:0 5px 0 var(--ink)}
+.door:active{translate:0 0;box-shadow:none}
+.door-arch{position:relative;display:block;aspect-ratio:180/112;border:1.5px solid var(--ink);border-radius:999px 999px 10px 10px;background:linear-gradient(var(--sky-glow),transparent 75%),var(--card);overflow:hidden}
+.door .scene{position:absolute;left:0;right:0;bottom:0;width:100%;height:auto;overflow:visible}
+.door .scene .ln{stroke-width:2}
+.door-text{display:flex;flex-direction:column;gap:4px;padding:0 4px}
+.door-name{font:400 clamp(22px,5.4vw,32px)/.95 var(--f-man)}
+.door-desc{font:500 clamp(14px,3.4vw,16px)/1.25 var(--f-ui);color:var(--ink-3)}
+.door-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 4px 0;padding-top:10px;border-top:1px dashed color-mix(in srgb,currentColor 35%,transparent)}
+.door-tag{display:flex;flex-direction:column;font:400 clamp(26px,6.4vw,34px)/1 var(--f-barlow);font-variant-numeric:tabular-nums}
+.door-tag small{font:400 11.5px/1.2 var(--f-anton);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:3px}
+.door-check{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;border:1.5px solid currentColor;flex:none;color:transparent;transition:background .15s,color .15s}
+.door-check svg{width:18px;height:18px}
+.door[aria-checked='true']{background:var(--ink);color:var(--paper);box-shadow:6px 6px 0 var(--terra)}
+.door[aria-checked='true'] .door-arch{border-color:var(--paper)}
+.door[aria-checked='true'] .door-desc{color:color-mix(in srgb,var(--paper) 75%,transparent)}
+.door[aria-checked='true'] .door-tag small{color:var(--rosa)}
+.door[aria-checked='true'] .door-check{background:var(--terra);border-color:var(--terra);color:var(--paper)}
+.doors:has([aria-checked='true']) .door[aria-checked='false']{opacity:.72}
+.doors:has([aria-checked='true']) .door[aria-checked='false']:hover{opacity:1}
+@keyframes ride{0%{translate:-6px 0}100%{translate:30px 0}}
+@keyframes bob{0%,100%{translate:0 0}50%{translate:0 -2px}}
+@keyframes speed{0%,100%{opacity:.2;translate:4px 0}50%{opacity:1;translate:0 0}}
+@keyframes hop{0%,100%{translate:0 0}40%{translate:0 -7px;rotate:-5deg}60%{translate:0 -7px;rotate:5deg}}
+@keyframes spark{0%,100%{opacity:0;scale:.4}50%{opacity:1;scale:1}}
+.scene .ride{animation:ride 2.6s steps(13,end) infinite alternate}
+.scene .bob{animation:bob calc(var(--frame) * 2) steps(1,end) infinite}
+.scene .speed{animation:speed calc(var(--frame) * 4) steps(2,end) infinite}
+.scene .bag{transform-box:fill-box;transform-origin:50% 100%;animation:hop 1.6s steps(8,end) infinite}
+.scene .spark path{transform-box:fill-box;transform-origin:center}
+.scene .spark{animation:spark 1.6s steps(6,end) infinite}
+.door[aria-checked='false'] .scene *{animation-play-state:paused}
+.doors:not(:has([aria-checked='true'])) .scene *{animation-play-state:running}
+.door[aria-checked='true'] .scene .ln{stroke:var(--ink)}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,2vw,18px);position:relative}
+.step{position:relative;display:grid;justify-items:center;text-align:center;gap:4px;padding:14px 6px 12px;border-radius:18px;background:var(--paper)}
+.step+.step::before{content:'';position:absolute;left:calc(-1 * clamp(8px,2vw,18px));top:46px;width:clamp(8px,2vw,18px);border-top:2px dotted var(--ink-3)}
+.step-art{display:block;width:clamp(56px,13vw,74px);aspect-ratio:1;animation:stepOn 4.2s steps(1,end) infinite;animation-delay:calc(var(--i) * 1.4s)}
+.step-art svg{width:100%;height:100%;overflow:visible}
+@keyframes stepOn{0%{translate:0 -5px;rotate:-4deg}8%{translate:0 0;rotate:2deg}16%,100%{translate:0 0;rotate:0deg}}
+.step-n{position:absolute;left:10px;top:8px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--paper);font:400 14px/1 var(--f-man)}
+.step b{font:400 clamp(18px,4.4vw,22px)/1 var(--f-man);font-weight:400}
+.step small{font:500 clamp(12.5px,3vw,14px)/1.25 var(--f-ui);color:var(--ink-3);max-width:16ch}
+.step .steam{animation:speed 1.2s steps(3,end) infinite}
+.step .pop{transform-box:fill-box;transform-origin:center;animation:popIn 1.4s steps(5,end) infinite}
+@keyframes popIn{0%,100%{scale:1}40%{scale:1.25}60%{scale:.9}}
+.step .tick{stroke-dasharray:24;animation:draw 2.1s steps(7,end) infinite}
+@keyframes draw{0%{stroke-dashoffset:24}45%,100%{stroke-dashoffset:0}}
+.step .ding{animation:spark 1s steps(3,end) infinite}
+@media(min-width:900px){.door{padding:14px 14px 16px}}
+@media(max-width:360px){.doors{grid-template-columns:1fr}.door{min-height:0}}
+@media(prefers-reduced-motion:reduce){.scene *,.step-art,.step *{animation:none!important}}
+/* Herramientas excluidas del HTML descargado. */
+.export-tools{width:calc(100% - 36px);max-width:720px;margin:28px auto;font:400 13px/1.5 system-ui,sans-serif;color:var(--ink-3)}
+.export-tools button{padding:12px 16px;border:1px solid var(--ink);border-radius:8px;background:var(--ink);color:var(--paper);font:600 14px/1.3 system-ui,sans-serif;min-height:44px}
+.export-tools button:disabled{opacity:.6;cursor:wait}
+.export-tools p{margin:10px 0}

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Carta y datos · La Casona</title>
+<link rel="stylesheet" href="css/menu-v2.css">
+<link rel="stylesheet" href="css/admin.css">
+<script src="js/vendor/supabase-js-2.57.4.js" defer></script>
+<script src="js/cloud.js" defer></script>
+<script src="js/v2/staff.js" defer></script>
+<script src="js/v2/carta-admin.js" defer></script>
+</head>
+<body class="admin">
+<header class="adm-top">
+  <a class="adm-brand" href="menuV2.html"><span>La</span> Casona</a>
+  <nav class="adm-nav" aria-label="Administración">
+    <a href="mesas.html" data-admin>Mesas y QR</a>
+    <a href="carta.html" aria-current="page" data-admin>Carta</a>
+    <a href="cocina.html">Cocina</a>
+    <a href="menuV2.html">Menú</a>
+  </nav>
+</header>
+
+<section class="gate" id="gate" aria-live="polite"></section>
+
+<main class="adm" id="app" hidden>
+  <section class="adm-hero">
+    <p class="adm-eyebrow">Administración</p>
+    <h1 class="adm-title">Carta <em>y</em> datos</h1>
+    <p class="adm-lead">Cambia precios, marca platillos como <b>agotados</b> u ocúltalos. Los cambios se ven en el menú al recargarlo.</p>
+  </section>
+
+  <section class="adm-panel" aria-labelledby="cfgTitle">
+    <h2 class="adm-h2" id="cfgTitle">Datos del restaurante</h2>
+    <form class="adm-cfg" id="cfgForm" novalidate>
+      <label class="field"><span class="label">Teléfono visible <em>como se mostrará</em></span><input class="input" name="telefono" maxlength="30" placeholder="33 1234 5678"></label>
+      <label class="field"><span class="label">WhatsApp de pedidos <em>solo dígitos · 521 + 10</em></span><input class="input" name="whatsapp" inputmode="numeric" maxlength="15" placeholder="5213312345678"><span class="err">Solo números (hasta 15).</span></label>
+      <label class="field"><span class="label">Envío a domicilio (MXN)</span><input class="input" name="envio_domicilio" type="number" min="0" step="1"></label>
+      <label class="field"><span class="label">Formas de pago <em>separadas por coma</em></span><input class="input" name="pagos" maxlength="120"><span class="err">Escribe al menos una.</span></label>
+      <label class="field"><span class="label">Sesión de mesa: minutos sin uso</span><input class="input" name="sesion_inactividad_min" type="number" min="10" max="600"></label>
+      <label class="field"><span class="label">Sesión de mesa: máximo de horas</span><input class="input" name="sesion_max_horas" type="number" min="1" max="24"></label>
+      <label class="adm-check"><input type="checkbox" name="recoger_en_sucursal"> Permitir “para recoger”</label>
+      <label class="adm-check"><input type="checkbox" name="pedidos_linea_activos"> Registrar pedidos en línea en cocina</label>
+      <button class="btn" type="submit" id="cfgBtn">Guardar datos</button>
+    </form>
+  </section>
+
+  <section aria-labelledby="listTitle">
+    <div class="adm-listhead">
+      <h2 class="adm-h2" id="listTitle">Platillos</h2>
+      <div class="adm-tools">
+        <label class="adm-filter"><span class="vh">Buscar</span><input class="input" id="search" type="search" placeholder="Buscar platillo…"></label>
+        <label class="adm-filter"><span class="vh">Mostrar</span>
+          <select class="input" id="show"><option value="all">Todos</option><option value="out">Agotados</option><option value="hidden">Ocultos</option></select></label>
+      </div>
+    </div>
+    <div id="carta" aria-live="polite"><p class="adm-empty">Cargando carta…</p></div>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

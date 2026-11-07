@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Cocina · La Casona</title>
+<link rel="stylesheet" href="css/menu-v2.css">
+<link rel="stylesheet" href="css/admin.css">
+<script src="js/vendor/supabase-js-2.57.4.js" defer></script>
+<script src="js/cloud.js" defer></script>
+<script src="js/v2/staff.js" defer></script>
+<script src="js/v2/cocina.js" defer></script>
+</head>
+<body class="admin">
+<header class="adm-top">
+  <a class="adm-brand" href="menuV2.html"><span>La</span> Casona</a>
+  <nav class="adm-nav" aria-label="Administración">
+    <a href="mesas.html" data-admin>Mesas y QR</a>
+    <a href="carta.html" data-admin>Carta</a>
+    <a href="cocina.html" aria-current="page">Cocina</a>
+    <a href="menuV2.html">Menú</a>
+  </nav>
+</header>
+
+<section class="gate" id="gate" aria-live="polite"></section>
+
+<main class="adm" id="app" hidden>
+  <div class="kds-head">
+    <div>
+      <p class="adm-eyebrow">Pantalla de cocina</p>
+      <h1 class="kds-title">Comandas</h1>
+    </div>
+    <div class="kds-tools">
+      <p class="kds-live"><span class="dot dot--live"></span><span id="liveTxt">Conectando…</span></p>
+      <button class="btn btn--ghost" type="button" id="soundBtn" aria-pressed="false">🔔 Activar sonido</button>
+    </div>
+  </div>
+  <div class="kds-board" id="board" aria-live="polite"></div>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

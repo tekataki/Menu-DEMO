@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="es-MX"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A domicilio / Paso por él · Standalone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Respaldo mientras regresan los @font-face originales (base64). Si los pegas, ganan ellos. -->
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@400;500&family=DM+Serif+Display&family=Nunito:wght@400..800&display=swap" rel="stylesheet">
+<style>
+/* ── PEGA AQUÍ tus 4 @font-face originales (Casona ManEater, Barlow C, Anton C, Nunito C) ── */
+
+:root{
+  --paper:#f3ede1;--paper-2:#ebe2d0;--paper-3:#dccdb1;--card:#faf6ee;
+  --ink:#1d1813;--ink-2:#4a4137;--ink-3:#7c7062;
+  --terra:#b4532a;--rosa:#e7b591;
+  --sky-glow:rgba(239,198,108,.55);--sky-warm:rgba(239,176,92,.85);
+  --bloom:#d2457f;--bloom-c:#f6e3a1;--leaf:#97b07a;
+  --f-man:'Casona ManEater','DM Serif Display',Georgia,serif;
+  --f-barlow:'Barlow C','Barlow Condensed','Arial Narrow',Arial,sans-serif;
+  --f-anton:'Anton C','Anton',Impact,'Arial Narrow',sans-serif;
+  --f-ui:'Nunito C','Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
+  /* Un solo reloj para todo: animación "en dos" (12 cuadros por segundo). */
+  --frame:calc(1s / 12);
+  color-scheme:light
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--card);color:var(--ink);font:400 18px/1.5 var(--f-ui);-webkit-font-smoothing:antialiased;font-synthesis:none}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+:focus-visible{outline:2.5px solid var(--terra);outline-offset:3px;border-radius:6px}
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+.standalone-stage{width:calc(100% - 36px);max-width:720px;margin:40px auto;padding:0}
+
+/* ── Trazo y relleno ───────────────────────────────── */
+.ln{fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.ln-paper{stroke:var(--card)}.ln-accent{stroke:var(--terra)}
+.fill-soft{fill:var(--paper-2)}.fill-deep{fill:var(--paper-3)}.fill-paper{fill:var(--card)}
+.fill-accent{fill:var(--terra)}.fill-ink{fill:var(--ink)}.fill-room{fill:var(--ink-2)}
+.fill-bloom{fill:var(--bloom)}.fill-bell{fill:var(--bloom-c)}
+.lit{fill:var(--bloom-c)}
+.shadow{fill:var(--ink);opacity:.13}
+.blush{fill:var(--bloom);opacity:.32}
+.puff{fill:var(--card);stroke:var(--ink);stroke-width:1.1}
+.dash{stroke-dasharray:1.6 2.8}
+.door .scene .ln{stroke-width:2}
+.door .scene .ln-thin{stroke-width:1.4}
+.door .scene .ln-hair{stroke-width:1}
+.door .scene .ln-bold{stroke-width:3.2}
+
+/* ── Contenedores (sin rediseño; solo movimiento y estados) ── */
+.doors{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,2vw,16px)}
+.door{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:12px;padding:12px 12px 14px;border:1.5px solid var(--ink);border-radius:clamp(90px,22vw,150px) clamp(90px,22vw,150px) 22px 22px;background:var(--paper);text-align:left;color:var(--ink);
+  transition:background-color var(--frame) steps(1,end),color var(--frame) steps(1,end),opacity calc(var(--frame)*2) steps(2,end),translate calc(var(--frame)*2) steps(2,end),box-shadow calc(var(--frame)*2) steps(2,end)}
+.door-arch{position:relative;display:block;aspect-ratio:180/112;border:1.5px solid var(--ink);border-radius:999px 999px 10px 10px;background:linear-gradient(var(--sky-glow),transparent 75%),var(--card);overflow:hidden}
+.door .scene{position:absolute;left:0;right:0;bottom:0;width:100%;height:auto;overflow:visible}
+.door-text{display:flex;flex-direction:column;gap:4px;padding:0 4px}
+.door-name{font:400 clamp(22px,5.4vw,32px)/.95 var(--f-man)}
+.door-desc{font:500 clamp(14px,3.4vw,16px)/1.25 var(--f-ui);color:var(--ink-3)}
+.door-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 4px 0;padding-top:10px;border-top:1px dashed color-mix(in srgb,currentColor 35%,transparent)}
+.door-tag{display:flex;flex-direction:column;font:400 clamp(26px,6.4vw,34px)/1 var(--f-barlow);font-variant-numeric:tabular-nums lining-nums}
+.door-tag small{font:400 11.5px/1.2 var(--f-anton);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:3px}
+/* Precio de menú: el signo acompaña, la cifra manda. */
+.amt{display:flex;align-items:flex-start}
+.amt i{font-style:normal;font-size:.5em;line-height:1.3;margin-right:.08em;letter-spacing:.03em;opacity:.78}
+.door-check{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;border:1.5px solid currentColor;flex:none;color:transparent;transition:background-color var(--frame) steps(1,end),color var(--frame) steps(1,end)}
+.door-check svg{width:18px;height:18px}
+.door-check path{stroke-dasharray:18;stroke-dashoffset:18}
+
+@media (hover:hover){
+  .door:hover{translate:0 -3px;box-shadow:0 5px 0 var(--ink)}
+  .door[aria-checked='true']:hover{translate:-2px -2px;box-shadow:8px 8px 0 var(--terra)}
+  .doors:has([aria-checked='true']) .door[aria-checked='false']:hover{opacity:1}
+}
+.door:active{translate:0 0;box-shadow:none}
+
+.door[aria-checked='true']{background:var(--ink);color:var(--paper);box-shadow:6px 6px 0 var(--terra);animation:stamp calc(var(--frame)*4) steps(1,end)}
+.door[aria-checked='true']:active{translate:2px 2px;box-shadow:3px 3px 0 var(--terra)}
+.door[aria-checked='true'] .door-arch{border-color:var(--paper);background:linear-gradient(var(--sky-warm),transparent 80%),var(--card)}
+.door[aria-checked='true'] .door-desc{color:color-mix(in srgb,var(--paper) 75%,transparent)}
+.door[aria-checked='true'] .door-tag small{color:var(--rosa)}
+.door[aria-checked='true'] .door-check{background:var(--terra);border-color:var(--terra);color:var(--paper);animation:checkPop calc(var(--frame)*3) steps(1,end)}
+.door[aria-checked='true'] .door-check path{stroke-dashoffset:0;transition:stroke-dashoffset calc(var(--frame)*3) steps(3,end) var(--frame)}
+.doors:has([aria-checked='true']) .door[aria-checked='false']{opacity:.72}
+
+/* Sello: la tarjeta se levanta, la sombra terracota cae y rebota. Cuadro a cuadro. */
+@keyframes stamp{
+  0%{translate:0 0;box-shadow:0 0 0 var(--terra)}
+  25%{translate:-3px -3px;box-shadow:10px 10px 0 var(--terra)}
+  50%{translate:1px 1px;box-shadow:4px 4px 0 var(--terra)}
+  75%{translate:0 0;box-shadow:7px 7px 0 var(--terra)}
+  100%{translate:0 0;box-shadow:6px 6px 0 var(--terra)}
+}
+@keyframes checkPop{0%{scale:.5}33%{scale:1.22}66%{scale:.94}100%{scale:1}}
+
+@media(min-width:900px){.door{padding:14px 14px 16px}}
+@media(max-width:360px){.doors{grid-template-columns:1fr}.door{min-height:0}}
+@media(prefers-reduced-motion:reduce){
+  .door,.door-check,.door-check path{animation:none!important;transition:none!important}
+}
+</style></head>
+<body data-download-name="Entrega La Casona.html">
+
+<svg class="defs" aria-hidden="true" focusable="false" width="0" height="0"><defs>
+<symbol id="d-bloom" viewBox="-13 -13 26 26"><g transform="translate(1 1.2)" style="fill:var(--bloom,#d2457f)"><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z"/><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z" transform="rotate(120)"/><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z" transform="rotate(240)"/></g><g fill="none" style="stroke:var(--ink,#1d1813)" stroke-width="1.1" stroke-linejoin="round"><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z"/><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z" transform="rotate(120)"/><path d="M0 0C-6-3-7-11 0-11S6-3 0 0Z" transform="rotate(240)"/><path d="M0-2.5v-5M2.2 1.3l4.3 2.5M-2.2 1.3l-4.3 2.5" stroke-width=".7" opacity=".6" stroke-linecap="round"/></g><circle r="2" style="fill:var(--bloom-c,#f6e3a1);stroke:var(--ink,#1d1813)" stroke-width=".7"/></symbol>
+<symbol id="d-pot" viewBox="0 0 120 60"><path d="M16 2h88v13H16z" style="fill:var(--pot,#b4532a);stroke:var(--ink,#1d1813)" stroke-width="2.2" stroke-linejoin="round"/><path d="M23 15h74l-9 43H32z" style="fill:var(--pot,#b4532a);stroke:var(--ink,#1d1813)" stroke-width="2.2" stroke-linejoin="round"/><path d="M27 30h66" fill="none" style="stroke:var(--paper,#f3ede1)" stroke-width="2" stroke-dasharray="2 5" stroke-linecap="round"/><path d="M31 40l6 6 6-6 6 6 6-6 6 6 6-6 6 6 6-6 6 6" fill="none" style="stroke:var(--paper,#f3ede1)" stroke-width="1.6" stroke-linejoin="round" opacity=".85"/></symbol>
+</defs></svg>
+
+<main class="standalone-stage" aria-label="Opciones de entrega">
+<div class="doors" role="radiogroup" aria-label="¿Cómo quieres tu pedido?">
+
+  <!-- ══ A DOMICILIO ══ -->
+  <button class="door door--domicilio" type="button" role="radio" data-fulfil="domicilio" aria-checked="false">
+    <span class="door-arch"><svg class="scene" viewBox="0 0 180 96" aria-hidden="true" focusable="false" data-scene="domicilio">
+      <path d="M2 80h176" class="ln"/>
+      <path d="M6 89h170" class="ln ln-thin"/>
+      <g>
+        <path d="M132 80V54l19-16 19 16v26z" class="fill-soft ln"/>
+        <rect x="145" y="66" width="12" height="14" class="fill-room"/>
+        <g data-r="door"><rect x="145" y="66" width="12" height="14" class="fill-soft"/><circle cx="154.6" cy="73.6" r="1" class="fill-ink"/></g>
+        <path d="M145 80V66h12v14" class="ln"/>
+        <path d="M126 58l25-22 25 22" class="ln"/>
+        <circle data-r="window" cx="151" cy="52" r="3.6" class="fill-paper ln ln-thin"/>
+        <path d="M151 48.8v6.4M147.8 52h6.4" class="ln ln-hair"/>
+      </g>
+      <g data-r="heart" style="display:none"><path d="M0 3.4C-4.8 0-5.6-2.7-3.8-4.2-2.3-5.4-.8-4.8 0-3.4.8-4.8 2.3-5.4 3.8-4.2 5.6-2.7 4.8 0 0 3.4Z" class="fill-bloom ln ln-hair"/></g>
+      <ellipse data-r="motoShadow" cx="0" cy="0" rx="24" ry="1.7" class="shadow"/>
+      <g data-r="puffs"></g>
+      <ellipse data-r="parcelShadow" cx="0" cy="0" rx="6" ry="1.3" class="shadow" style="display:none"/>
+      <g data-r="moto">
+        <g data-r="speed" style="display:none"><path d="M-19 -29h-8M-17 -18h-10M-15 -10h-6" class="ln ln-thin"/></g>
+        <path d="M-5 -6H-11" class="ln"/>
+        <g transform="translate(0 -7)"><circle r="7" class="fill-paper ln"/><g data-r="spokesR"><path d="M0 -4.4V4.4M-3.8 -2.2L3.8 2.2M-3.8 2.2L3.8 -2.2" class="ln ln-thin"/></g><g data-r="smearR" style="display:none"><circle r="4.2" class="ln ln-thin" stroke-dasharray="4 2.6"/></g><circle r="1.6" class="fill-ink"/></g>
+        <g transform="translate(34 -7)"><circle r="7" class="fill-paper ln"/><g data-r="spokesF"><path d="M0 -4.4V4.4M-3.8 -2.2L3.8 2.2M-3.8 2.2L3.8 -2.2" class="ln ln-thin"/></g><g data-r="smearF" style="display:none"><circle r="4.2" class="ln ln-thin" stroke-dasharray="4 2.6"/></g><circle r="1.6" class="fill-ink"/></g>
+        <path d="M32.5 -25L34 -7" class="ln"/>
+        <path d="M26 -12L29 -28H33C32.5 -21 33 -16.5 35.5 -13.5L30 -12Z" class="fill-soft ln"/>
+        <path d="M28 -11C29.5 -16.5 38.5 -16.5 40.5 -11" class="ln"/>
+        <path d="M-10 -11C-10 -17.5 -5 -21 3 -21H15C18 -21 19.5 -17 18.5 -12Z" class="fill-soft ln"/>
+        <path d="M18.5 -12H27" class="ln"/>
+        <path d="M31 -28L30 -31.5H25" class="ln"/>
+        <circle data-r="lamp" cx="34.2" cy="-24.5" r="1.8" class="fill-paper ln ln-thin"/>
+        <path d="M3.5 -23.2H14.5" class="ln ln-bold"/>
+        <path d="M-13 -22H3" class="ln ln-thin"/>
+        <rect x="-13" y="-34" width="15" height="12" rx="1.2" class="fill-accent ln"/>
+        <path d="M-10.5 -28H-.5" class="ln ln-hair ln-paper dash"/>
+        <g data-r="lid"><path d="M-14 -34.6H3" class="ln ln-bold"/></g>
+      </g>
+      <g data-r="parcel" style="display:none">
+        <path d="M-5.6 -10.5H5.6L4.9 0H-4.9Z" class="fill-paper"/>
+        <path d="M-5.6 -10.5H5.6L5.45 -8.2H-5.45Z" class="fill-accent"/>
+        <path d="M-5.6 -10.5H5.6L4.9 0H-4.9Z" class="ln ln-thin"/>
+        <path d="M-2.3 -10.5V-11.8C-2.3 -14.6 2.3 -14.6 2.3 -11.8V-10.5" class="ln ln-thin"/>
+      </g>
+    </svg></span>
+    <span class="door-text"><span class="door-name">A domicilio</span><span class="door-desc">Te lo llevamos a tu casa</span></span>
+    <span class="door-foot"><span class="door-tag"><small>Envío</small><span class="amt"><i>+$</i>35</span></span><span class="door-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+  </button>
+
+  <!-- ══ PASO POR ÉL ══ -->
+  <button class="door door--recoger" type="button" role="radio" data-fulfil="recoger" aria-checked="false">
+    <span class="door-arch"><svg class="scene" viewBox="0 0 180 96" aria-hidden="true" focusable="false" data-scene="recoger">
+      <path d="M54 80V40a36 36 0 0 1 72 0v40" class="fill-soft ln"/>
+      <path d="M66 80V44a24 24 0 0 1 48 0v36z" class="fill-deep"/>
+      <path d="M66 80V44a24 24 0 0 1 48 0v36" class="ln ln-thin"/>
+      <path d="M2 80h176" class="ln"/>
+      <g data-r="rays" style="display:none"><path d="M80.5 23.5l-3.2-1.6M79.8 28h-3.6M80.5 32.5l-3.2 1.6M99.5 23.5l3.2-1.6M100.2 28h3.6M99.5 32.5l3.2 1.6" class="ln ln-thin ln-accent"/></g>
+      <g data-r="bell" transform="translate(90 20.5)">
+        <path d="M0 0V2.4" class="ln ln-thin"/>
+        <path d="M-4.2 8.6C-4.2 4 -2.8 2.4 0 2.4S4.2 4 4.2 8.6L5.4 10H-5.4Z" class="fill-bell ln ln-thin"/>
+        <circle cy="11.3" r="1.1" class="fill-ink"/>
+      </g>
+      <ellipse data-r="bagShadow" cx="0" cy="0" rx="12" ry="1.8" class="shadow"/>
+      <g data-r="bag">
+        <path d="M-11.5 -22H11.5L10 0H-10Z" class="fill-paper"/>
+        <path d="M-11.5 -22H11.5L11.2 -17.5H-11.2Z" class="fill-accent"/>
+        <path d="M-11.5 -22H11.5L10 0H-10Z" class="ln"/>
+        <path d="M-4.6 -22V-24.6C-4.6 -30.6 4.6 -30.6 4.6 -24.6V-22" class="ln"/>
+        <ellipse cx="-6.6" cy="-6.2" rx="1.9" ry="1.1" class="blush"/>
+        <ellipse cx="6.6" cy="-6.2" rx="1.9" ry="1.1" class="blush"/>
+        <g data-r="eyes"><circle cx="-3.8" cy="-9.4" r="1.35" class="fill-ink"/><circle cx="3.8" cy="-9.4" r="1.35" class="fill-ink"/></g>
+        <g data-r="happy" style="display:none"><path d="M-5.4 -8.8Q-3.8 -11.4 -2.2 -8.8M2.2 -8.8Q3.8 -11.4 5.4 -8.8M-1.4 -5.8Q0 -4.4 1.4 -5.8" class="ln ln-hair"/></g>
+      </g>
+      <g data-r="sparkA" data-x="120" data-y="47" style="display:none"><path d="M0 -5.2C.5 -1.6 1.6 -.5 5.2 0 1.6 .5 .5 1.6 0 5.2-.5 1.6-1.6 .5-5.2 0-1.6-.5-.5-1.6 0-5.2Z" class="fill-accent"/></g>
+      <g data-r="sparkB" data-x="60" data-y="34" style="display:none"><path d="M0 -5.2C.5 -1.6 1.6 -.5 5.2 0 1.6 .5 .5 1.6 0 5.2-.5 1.6-1.6 .5-5.2 0-1.6-.5-.5-1.6 0-5.2Z" class="fill-accent"/></g>
+      <g data-r="sparkC" data-x="107" data-y="60" style="display:none"><path d="M0 -5.2C.5 -1.6 1.6 -.5 5.2 0 1.6 .5 .5 1.6 0 5.2-.5 1.6-1.6 .5-5.2 0-1.6-.5-.5-1.6 0-5.2Z" class="fill-accent"/></g>
+      <g transform="translate(14 34) scale(.36)">
+        <g data-r="agave" style="fill:var(--leaf2,#a9bb92);stroke:var(--ink)" stroke-width="2" stroke-linejoin="round">
+          <path d="M58 94C44 72 26 60 4 54c22 2 42 14 58 38z"/><path d="M62 94c14-22 32-34 54-40-22 2-42 14-58 38z"/><path d="M56 94C48 66 38 44 24 22c18 18 30 42 38 70z"/><path d="M64 94c8-28 18-50 32-72-18 18-30 42-38 70z"/><path d="M57 94C55 62 56 34 60 6c4 28 5 56 3 88z"/>
+        </g>
+        <use href="#d-pot" x="0" y="90" width="120" height="60"/>
+      </g>
+      <g transform="translate(140 34) scale(.36)">
+        <g data-r="bush">
+          <path d="M22 96C6 84 12 58 32 60c0-20 26-30 38-14 14-12 40-2 32 20 16 6 12 30-6 30z" style="fill:var(--leaf,#9db27f);stroke:var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M40 74c6 4 12 4 18 0M66 66c6 4 12 4 18 0M50 88c6 3 12 3 18 0" fill="none" style="stroke:var(--ink)" stroke-width="1.4" stroke-linecap="round" opacity=".5"/>
+          <use data-r="b0" data-c="38 66" href="#d-bloom" x="28" y="56" width="20" height="20"/>
+          <use data-r="b1" data-c="69 53" href="#d-bloom" x="58" y="42" width="22" height="22"/>
+          <use data-r="b2" data-c="93 67" href="#d-bloom" x="84" y="58" width="18" height="18"/>
+          <use data-r="b3" data-c="54 82" href="#d-bloom" x="46" y="74" width="16" height="16"/>
+          <use data-r="b4" data-c="85 87" href="#d-bloom" x="76" y="78" width="18" height="18"/>
+        </g>
+        <use href="#d-pot" x="0" y="90" width="120" height="60"/>
+      </g>
+    </svg></span>
+    <span class="door-text"><span class="door-name">Paso por él</span><span class="door-desc">Lo recoges en La Casona</span></span>
+    <span class="door-foot"><span class="door-tag"><small>Sin costo</small><span class="amt"><i>$</i>0</span></span><span class="door-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>
+  </button>
+</div>
+</main>
+
+<script>
+(() => {
+  /* ═══ Reloj: paso fijo a 12 cuadros/s. Determinista, sin depender de los fps del monitor. ═══ */
+  const FPS = 12, DT = 1 / FPS, F = n => n / FPS;
+  const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+  const lerp = (a, b, p) => a + (b - a) * p;
+  const E = {
+    io: p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2,
+    in: p => p * p * p,
+    out: p => 1 - Math.pow(1 - p, 3),
+    back: p => { const c = 1.9; return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); }
+  };
+  const seg = (t, a, b, e) => { const p = clamp((t - a) / (b - a), 0, 1); return e ? e(p) : p; };
+  const r2 = n => Math.round(n * 100) / 100;
+  const tf = (el, v) => { if (el._tf !== v) { el.setAttribute('transform', v); el._tf = v; } };
+  const vis = (el, on) => { if (el._v !== on) { el.style.display = on ? '' : 'none'; el._v = on; } };
+  const alpha = (el, v) => { v = r2(v); if (el._a !== v) { el.setAttribute('opacity', v); el._a = v; } };
+  const NS = 'http://www.w3.org/2000/svg';
+
+  /* Una escena = idle vivo + un ciclo narrativo que siempre termina en la pose de reposo.
+     Si sueltas la tarjeta a medio ciclo, la historia termina antes de descansar: nada se congela. */
+  function Scene(svg, def) {
+    const r = {}; svg.querySelectorAll('[data-r]').forEach(n => r[n.dataset.r] = n);
+    const s = { r, N: Math.round(def.T * FPS), n: 0, frame: 0, ic: 0, playing: false, want: false, st: {} };
+    def.build && def.build(s);
+    def.init(s);
+    s.step = () => {
+      s.frame++; s.ic += DT;
+      if (s.playing && ++s.n >= s.N) { s.n = 0; if (!s.want) s.playing = false; }
+      def.render(s, true);
+    };
+    s.draw = () => def.render(s, false);
+    s.play = () => { s.want = true; if (!s.playing) { s.playing = true; s.n = 0; } };
+    s.release = () => { s.want = false; };
+    s.once = () => { if (!s.playing) { s.playing = true; s.n = 0; } };
+    s.reset = () => { s.playing = s.want = false; s.n = s.frame = 0; s.ic = 0; def.init(s); def.render(s, false); };
+    return s;
+  }
+
+  /* ═══ A DOMICILIO: arranca → frena → lanza la bolsa → la casa la recibe → se va y regresa ═══ */
+  const X0 = 30, X1 = 82;
+  const motoX = t => t < .7 ? X0
+    : t < 2.1 ? lerp(X0, X1, E.io(seg(t, .7, 2.1)))
+    : t < 4.25 ? X1
+    : t < 5.4 ? lerp(X1, 206, E.in(seg(t, 4.25, 5.4)))
+    : t < 6.7 ? lerp(-60, X0, E.out(seg(t, 5.4, 6.7)))
+    : X0;
+
+  const domicilio = {
+    T: 7.25,
+    build(s) {
+      s.pi = 0;
+      s.parts = Array.from({ length: 10 }, () => {
+        const el = document.createElementNS(NS, 'circle');
+        el.setAttribute('class', 'puff'); el.style.display = 'none'; s.r.puffs.appendChild(el);
+        return { el, age: 1, life: 1, x: 0, y: 0, vx: 0, vy: 0 };
+      });
+    },
+    init(s) {
+      Object.assign(s.st, { v: 0, tilt: 0, tv: 0, wa: 0 });
+      s.parts.forEach(P => { P.age = P.life; P.el._v = undefined; vis(P.el, false); });
+    },
+    render(s, adv) {
+      const { r, st } = s, p = s.playing, n = s.n, t = p ? F(n) : 0;
+      const x = motoX(t);
+      let dx = p ? x - motoX(Math.max(0, t - DT)) : 0;
+      if (Math.abs(dx) > 40) dx = motoX(t + DT) - x;
+
+      if (adv) {
+        /* Suspensión: la inclinación nace de la aceleración real, con resorte amortiguado. */
+        const a = dx - st.v; st.v = dx;
+        let target = clamp(-a * 2.2, -7, 7);
+        if (p && t >= .45 && t < .7) target = -4;   // acelerón: se echa para atrás
+        if (p && t >= 2.1 && t < 2.3) target = 3;   // frenón: clava la nariz
+        st.tv = (st.tv + (target - st.tilt) * .5) * .45; st.tilt += st.tv;
+        if (Math.abs(st.tilt) < .05 && Math.abs(st.tv) < .05) st.tilt = st.tv = 0;
+        st.wa = (st.wa + dx / 7 * 57.2958) % 360;   // ruedas giran según distancia recorrida
+      }
+
+      const moving = Math.abs(dx) > .3;
+      const bob = moving ? (s.frame % 2 ? -.8 : 0) : ((s.frame >> 1) % 2 ? -.45 : 0);
+      const fast = Math.abs(dx) > 4.5;               // a alta velocidad, rayos → barrido
+      vis(r.spokesR, !fast); vis(r.spokesF, !fast); vis(r.smearR, fast); vis(r.smearF, fast);
+      if (fast) { const k = `rotate(${s.frame % 2 * 45})`; tf(r.smearR, k); tf(r.smearF, k); }
+      else { const k = `rotate(${r2(st.wa)})`; tf(r.spokesR, k); tf(r.spokesF, k); }
+
+      tf(r.moto, `translate(${r2(x)} ${r2(80 + bob)}) rotate(${r2(st.tilt)} ${st.tilt < 0 ? 0 : 34} 0)`);
+      tf(r.motoShadow, `translate(${r2(x + 13)} 80.6)`);
+      vis(r.speed, dx > 2.2);
+      tf(r.speed, `translate(${s.frame % 2 ? -2.5 : 0} 0)`);
+      r.lamp.classList.toggle('lit', p && t > .45 && t < 6.9);
+
+      const lid = seg(t, 2.25, 2.42) - seg(t, 4.0, 4.17);
+      tf(r.lid, `rotate(${r2(-110 * lid)} -14 -34.6)`);
+
+      /* Bolsa: parábola con giro → aplastamiento al caer → entra a la casa */
+      const showParcel = p && t >= 2.42 && t < 3.95;
+      vis(r.parcel, showParcel); vis(r.parcelShadow, showParcel);
+      if (showParcel) {
+        let px = 151, py = 80, rot = 0, sx = 1, sy = 1, o = 1;
+        if (t < 3.17) {
+          const q = seg(t, 2.42, 3.17);
+          px = lerp(X1 - 5.5, 151, q); py = lerp(46, 80, q) - 30 * 4 * q * (1 - q); rot = 360 * q;
+        } else if (t < 3.42) {
+          const k = Math.min(Math.round((t - 3.17) * FPS), 2);
+          [sx, sy] = [[1.3, .7], [.9, 1.12], [1.04, .97]][k];
+        } else if (t >= 3.62) {
+          const q = seg(t, 3.62, 3.95); py = 80 - 2.5 * q; sx = sy = 1 - .4 * q; o = 1 - q;
+        }
+        tf(r.parcel, `translate(${r2(px)} ${r2(py)}) rotate(${r2(rot)} 0 -6) scale(${r2(sx)} ${r2(sy)})`);
+        alpha(r.parcel, o);
+        const h = 80 - py;
+        tf(r.parcelShadow, `translate(${r2(px)} 80.6) scale(${r2(clamp(1 - h / 45, .3, 1) * sx)} 1)`);
+        alpha(r.parcelShadow, clamp(1 - h / 50, .25, 1) * o);
+      }
+
+      const door = seg(t, 3.42, 3.58) - seg(t, 3.92, 4.08);
+      tf(r.door, `translate(145 0) scale(${r2(1 - .86 * door)} 1) translate(-145 0)`);
+      r.window.classList.toggle('lit', p && (n === 49 || (n >= 51 && n < 79)));  // foco que parpadea al prender
+
+      const hOn = p && n >= 50 && n < 66;
+      vis(r.heart, hOn);
+      if (hOn) {
+        const sc = Math.max(seg(t, F(50), F(53), E.back), .25);
+        const rise = seg(t, F(53), F(66));
+        tf(r.heart, `translate(151 ${r2(25 - 8 * rise)}) rotate(${Math.floor(n / 3) % 2 ? 7 : -7}) scale(${r2(sc)})`);
+        alpha(r.heart, 1 - seg(t, F(60), F(66)));
+      }
+
+      if (adv) {
+        const spawn = (px, py, vx, vy, life) => { const P = s.parts[s.pi++ % s.parts.length]; Object.assign(P, { x: px, y: py, vx, vy, age: 0, life }); };
+        if (!p && s.frame % 30 === 0) spawn(x - 12, 74 + bob, -.45, -.3, .6);            // escape en ralentí
+        if (p && t >= .45 && t < .7) spawn(x - 12 - Math.random() * 2, 74, -1.1, -.45, .5); // acelerón
+        if (moving && dx > 1 && s.frame % 2 === 0 && x > -20 && x < 200) spawn(x - 7, 78.6, -.25, -.22, .42); // polvo
+        s.parts.forEach(P => {
+          if (P.age >= P.life) { vis(P.el, false); return; }
+          P.age += DT; P.x += P.vx; P.y += P.vy;
+          const q = Math.min(P.age / P.life, 1);
+          P.el.setAttribute('cx', r2(P.x)); P.el.setAttribute('cy', r2(P.y)); P.el.setAttribute('r', r2(1.1 + 3 * q));
+          alpha(P.el, 1 - q); vis(P.el, q < 1);
+        });
+      }
+    }
+  };
+
+  /* ═══ PASO POR ÉL: la bolsa espera, salta, la campana suena: "¡listo!" ═══ */
+  const SP = [.45, 1.25, .9, .4];
+  const hop = (t, a, b, c, H) => {
+    if (t < a || t >= c + .34) return null;
+    if (t < b) { const k = E.out(seg(t, a, b)); return { y: 0, sx: 1 + .14 * k, sy: 1 - .18 * k, rot: 0, look: -1 }; }
+    if (t < c) {
+      const q = seg(t, b, c), st = Math.abs(q - .5) * 2;
+      return { y: -H * 4 * q * (1 - q), sx: 1 - .08 * st, sy: 1 + .12 * st, rot: -5 * Math.sin(q * Math.PI * 2) * (H / 14), look: -1 };
+    }
+    const K = [[1.22, .76], [.93, 1.08], [1.03, .98], [1, 1]][Math.min(Math.round((t - c) * FPS), 3)];
+    return { y: 0, sx: K[0], sy: K[1], rot: 0, look: 0 };
+  };
+
+  const recoger = {
+    T: F(58),
+    init() {},
+    render(s) {
+      const { r } = s, p = s.playing, t = p ? F(s.n) : -1;
+      const br = Math.sin(s.ic * Math.PI * 2 / 2.8);
+      let y = 0, sx = 1 - .014 * br, sy = 1 + .024 * br, rot = 0, look = 0;
+      const h = p && (hop(t, F(6), F(9), F(15), 14) || hop(t, F(23), F(24), F(28), 6));
+      if (h) ({ y, sx, sy, rot, look } = h);
+      tf(r.bag, `translate(90 ${r2(80 + y)}) rotate(${r2(rot)} 0 -12) scale(${r2(sx)} ${r2(sy)})`);
+      tf(r.bagShadow, `translate(90 80.6) scale(${r2(clamp(1 + y / 26, .4, 1.3) * sx)} 1)`);
+      alpha(r.bagShadow, clamp(1 + y / 30, .35, 1));
+
+      const happy = p && s.n >= 15 && s.n < 31;
+      vis(r.eyes, !happy); vis(r.happy, happy);
+      const blink = p ? s.n === 44 : s.frame % 41 === 20;
+      tf(r.eyes, blink ? 'translate(0 -9.4) scale(1 .12) translate(0 9.4)' : `translate(0 ${look})`);
+
+      const kd = f0 => p ? s.n - f0 : -1;
+      const k1 = kd(15), k2 = kd(28);
+      const ang = k1 >= 0 && k1 < 5 ? [16, -12, 8, -5, 2][k1] : k2 >= 0 && k2 < 3 ? [7, -4, 2][k2] : 0;
+      tf(r.bell, `translate(90 20.5) rotate(${ang})`);
+      const rk = k1 >= 0 && k1 < 4 ? k1 : k2 >= 0 && k2 < 2 ? k2 : -1;
+      vis(r.rays, rk >= 0);
+      if (rk >= 0) tf(r.rays, `translate(90 28) scale(${rk % 2 ? 1.2 : 1}) translate(-90 -28)`);
+
+      [['sparkA', 15, 1], ['sparkB', 16, .8], ['sparkC', 17, .6]].forEach(([key, f0, base], i) => {
+        const el = r[key]; let k = kd(f0), amp = base;
+        if (!p) { const which = Math.floor(s.frame / 50) % 2; k = i === which ? (s.frame % 50) - 20 : -1; amp = base * .7; }
+        const on = k >= 0 && k < 4; vis(el, on);
+        if (on) tf(el, `translate(${el.dataset.x} ${el.dataset.y}) rotate(${k * 15}) scale(${r2(SP[k] * amp)})`);
+      });
+
+      let w = 0;
+      if (p) {
+        const d = t - F(15); if (d >= 0 && d < 1.1) w += 3.4 * Math.sin(d * Math.PI * 4) * (1 - d / 1.1);
+        const d2 = t - F(28); if (d2 >= 0 && d2 < .6) w += 1.4 * Math.sin(d2 * Math.PI * 5) * (1 - d2 / .6);
+      }
+      tf(r.agave, `rotate(${r2(-w)} 60 94)`);
+      tf(r.bush, `rotate(${r2(w * .8)} 60 96)`);
+      for (let i = 0; i < 5; i++) { const b = r['b' + i]; tf(b, `rotate(${r2(w * (i % 2 ? -5 : 5))} ${b.dataset.c})`); }
+    }
+  };
+
+  /* ═══ Control ═══ */
+  const DEFS = { domicilio, recoger };
+  const group = document.querySelector('.doors');
+  const doors = [...group.querySelectorAll('[data-fulfil]')];
+  const scenes = new Map(doors.map(d => { const svg = d.querySelector('[data-scene]'); return [d, Scene(svg, DEFS[svg.dataset.scene])]; }));
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const hovering = new Set();
+
+  const refresh = () => doors.forEach(d => {
+    const s = scenes.get(d);
+    (d.getAttribute('aria-checked') === 'true' || hovering.has(d)) ? s.play() : s.release();
+  });
+
+  function select(btn) {
+    if (btn.getAttribute('aria-checked') === 'true') return;
+    doors.forEach(b => { const on = b === btn; b.setAttribute('aria-checked', String(on)); b.tabIndex = on ? 0 : -1; });
+    refresh();
+    group.dispatchEvent(new CustomEvent('fulfilchange', { bubbles: true, detail: { value: btn.dataset.fulfil } }));
+  }
+
+  doors.forEach((b, i) => {
+    b.tabIndex = i === 0 ? 0 : -1;
+    b.addEventListener('click', () => select(b));
+    b.addEventListener('keydown', e => {
+      if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(e.key)) return;
+      e.preventDefault();
+      const n = e.key === 'Home' ? 0 : e.key === 'End' ? doors.length - 1 : (i + (['ArrowLeft', 'ArrowUp'].includes(e.key) ? -1 : 1) + doors.length) % doors.length;
+      select(doors[n]); doors[n].focus();
+    });
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { hovering.add(b); refresh(); } });
+    b.addEventListener('pointerleave', () => { hovering.delete(b); refresh(); });
+  });
+
+  let raf = 0, last = 0, acc = 0, onScreen = true;
+  const tick = now => {
+    acc += Math.min(now - last, 200) / 1000; last = now;
+    while (acc >= DT) { acc -= DT; scenes.forEach(s => s.step()); }
+    raf = requestAnimationFrame(tick);
+  };
+  const sync = () => {
+    const run = onScreen && !document.hidden && !reduce.matches;
+    if (run && !raf) { last = performance.now(); acc = 0; raf = requestAnimationFrame(tick); }
+    if (!run && raf) { cancelAnimationFrame(raf); raf = 0; }
+    if (reduce.matches) scenes.forEach(s => s.reset());
+  };
+  new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; sync(); }).observe(group);
+  document.addEventListener('visibilitychange', sync);
+  reduce.addEventListener ? reduce.addEventListener('change', sync) : reduce.addListener(sync);
+
+  scenes.forEach(s => s.draw());
+  sync();
+
+  /* Entrada + "modo demo": cada escena cuenta su historia una vez y luego descansa. */
+  if (!reduce.matches) {
+    const fr = 1000 / FPS, st = { easing: 'steps(1, end)' };
+    doors.forEach((d, i) => d.animate([
+      { opacity: 0, transform: 'translateY(12px)', ...st },
+      { opacity: .6, transform: 'translateY(4px)', offset: .34, ...st },
+      { opacity: 1, transform: 'translateY(-2px)', offset: .67, ...st },
+      { opacity: 1, transform: 'translateY(0)' }
+    ], { duration: fr * 3, delay: i * fr * 2, fill: 'backwards' }));
+    setTimeout(() => scenes.get(doors[0]).once(), 500);
+    setTimeout(() => scenes.get(doors[1]).once(), 1400);
+  }
+})();
+</script>
+</body></html>

@@ -1,0 +1,10 @@
+/* Adaptadores de integración; el diseño y movimiento vienen de los HTML del usuario.
+   Aislar estilos evita que clases genéricas como .stamp afecten al sello o la carta. */
+.casona-steps-v4,.casona-delivery-v2{min-width:0;width:100%}
+.casona-steps-v4 .step-art,.casona-steps-v4 .step-art *{animation:none}
+.casona-steps-v4 .step::before{content:none}
+.casona-steps-v4 .stamp{position:static;right:auto;top:auto;font:inherit;color:inherit;animation:none}
+.casona-delivery-v2 .door{animation:none}
+.casona-delivery-v2 .door:hover{translate:0 0;box-shadow:none}
+.casona-delivery-v2 .doors--one{grid-template-columns:1fr}
+@media(min-width:900px){.mode--mesa>.casona-steps-v4{grid-column:2}}

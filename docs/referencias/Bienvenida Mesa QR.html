@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bienvenido · Mesa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #c81d25;
+      --ink-dark: #a3151c;
+      --paper: #f3ece0;
+      --ground: #1a1714;
+      --line: #4a413a;
+      --muted: #b8ab9c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+    body {
+      background: var(--ground);
+      color: var(--paper);
+      font-family: 'Space Mono', 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 16px 40px;
+    }
+
+    .topbar {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 4px;
+    }
+    .label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--paper);
+      border: 1px solid var(--line);
+      padding: 12px 18px;
+      cursor: pointer;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .btn:hover { background: #2c2622; }
+    .btn:focus-visible, input:focus-visible { outline: 2px solid #e5484d; outline-offset: 2px; }
+    .btn.primary { background: var(--ink); border-color: var(--ink); }
+    .btn.primary:hover { background: var(--ink-dark); border-color: var(--ink-dark); }
+    .btn.ghost { border: 0; padding: 8px 4px; color: var(--muted); }
+    .btn.ghost:hover { background: transparent; color: var(--paper); }
+
+    .stage { width: 100%; max-width: 520px; }
+    .stage svg { display: block; width: 100%; height: auto; }
+
+    /* ---------- Bienvenida ---------- */
+    .welcome {
+      width: 100%;
+      max-width: 520px;
+      padding-top: 24px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .5s ease, transform .5s ease;
+      pointer-events: none;
+    }
+    .welcome.show { opacity: 1; transform: none; pointer-events: auto; }
+    .welcome .label { color: var(--muted); }
+    .welcome h1 {
+      font-family: 'Anton', Impact, sans-serif;
+      font-weight: 400;
+      font-size: clamp(34px, 9vw, 52px);
+      line-height: 1.02;
+      letter-spacing: .01em;
+      text-transform: uppercase;
+      margin: 10px 0 12px;
+      text-wrap: balance;
+    }
+    .welcome h1 span { color: #f27a7f; }
+    .welcome p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 42ch;
+      text-wrap: pretty;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+    }
+    .actions .primary { flex: 1 1 200px; }
+
+    /* ---------- Panel de configuración ---------- */
+    .sheet {
+      position: fixed;
+      inset: auto 0 0 0;
+      background: #221e1a;
+      border-top: 1px solid var(--line);
+      padding: 20px 16px 24px;
+      transform: translateY(105%);
+      transition: transform .3s ease;
+      z-index: 10;
+    }
+    .sheet.open { transform: none; }
+    .sheet-inner { max-width: 520px; margin: 0 auto; }
+    .sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .fields { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; }
+    .fields .full { grid-column: 1 / -1; }
+    .field label { display: block; color: var(--muted); margin-bottom: 6px; }
+    .field input {
+      width: 100%;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--paper);
+      background: var(--ground);
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      border-radius: 0;
+    }
+    .link-row {
+      display: flex;
+      margin-top: 16px;
+      border: 1px solid var(--line);
+    }
+    .link-row code {
+      flex: 1;
+      font-size: 12px;
+      padding: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .link-row .btn { border: 0; border-left: 1px solid var(--line); }
+    .sheet-actions { display: flex; justify-content: flex-end; margin-top: 14px; }
+    @media (max-width: 420px) { .fields { grid-template-columns: 1fr; } }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translate(-50%, 20px);
+      background: var(--paper);
+      color: #1a1714;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      padding: 12px 16px;
+      opacity: 0;
+      transition: opacity .2s, transform .2s;
+      z-index: 20;
+      max-width: calc(100% - 32px);
+      text-align: center;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    /* ---------- Animación del sello ---------- */
+    .anton { font-family: 'Anton', Impact, 'Arial Narrow', sans-serif; }
+    .mono  { font-family: 'Space Mono', 'Courier New', monospace; }
+
+    .tool, .imprint, .shadow, .burst, .paper { transform-box: fill-box; }
+    .tool    { transform-origin: 50% 100%; transform: translateY(-720px); }
+    .imprint { transform-origin: 50% 50%; opacity: 0; }
+    .shadow  { transform-origin: 50% 50%; opacity: 0; }
+    .burst   { transform-origin: 50% 50%; opacity: 0; }
+    .paper   { transform-origin: 50% 50%; transform: rotate(1.5deg); }
+
+    .play .tool    { animation: tool 1.8s .2s both; }
+    .play .imprint { animation: imprint 1.8s .2s both; }
+    .play .shadow  { animation: shadow 1.8s .2s both; }
+    .play .burst   { animation: burst 1.8s .2s both; }
+    .play .paper   { animation: shake 1.8s .2s both; }
+
+    @keyframes tool {
+      0%   { transform: translateY(-720px) scaleY(1); animation-timing-function: cubic-bezier(.55,0,.9,.4); }
+      36%  { transform: translateY(0) scaleY(1); }
+      40%  { transform: translateY(0) scaleY(.9); }
+      46%  { transform: translateY(0) scaleY(1.02); }
+      52%  { transform: translateY(0) scaleY(1); animation-timing-function: cubic-bezier(.3,0,.6,1); }
+      100% { transform: translateY(-720px) scaleY(1); }
+    }
+    @keyframes imprint {
+      0%, 37% { opacity: 0; transform: scale(1.08); }
+      38%  { opacity: 1; transform: scale(1.05); }
+      56%, 100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes shadow {
+      0%   { opacity: 0; transform: scale(.35); animation-timing-function: ease-in; }
+      36%, 52% { opacity: .35; transform: scale(1); }
+      100% { opacity: 0; transform: scale(.35); }
+    }
+    @keyframes burst {
+      0%, 37% { opacity: 0; transform: scale(.8); }
+      40%  { opacity: 1; transform: scale(.95); }
+      65%, 100% { opacity: 0; transform: scale(1.25); }
+    }
+    @keyframes shake {
+      0%, 37% { transform: translate(0,0) rotate(1.5deg); }
+      38%  { transform: translate(0,5px) rotate(1.5deg); }
+      41%  { transform: translate(0,-3px) rotate(1.5deg); }
+      44%  { transform: translate(0,1px) rotate(1.5deg); }
+      47%, 100% { transform: translate(0,0) rotate(1.5deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tool, .shadow, .burst { display: none; }
+      .play .imprint { animation: none; opacity: 1; }
+      .play .paper { animation: none; }
+      .welcome, .sheet { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <button class="btn ghost label" id="openCfg" type="button" aria-controls="sheet">Configurar mesa</button>
+  </div>
+
+  <div class="stage" id="stage">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 620" role="img" id="stampSvg" aria-label="Sello: Bienvenido a la mesa 1">
+      <defs>
+        <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="warp"/>
+          <feDisplacementMap in="SourceGraphic" in2="warp" scale="5" xChannelSelector="R" yChannelSelector="G" result="rough"/>
+          <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" seed="3" result="grain"/>
+          <feColorMatrix in="grain" type="matrix"
+            values="0 0 0 0 0
+                    0 0 0 0 0
+                    0 0 0 0 0
+                    -14 0 0 0 8.6" result="holes"/>
+          <feComposite in="rough" in2="holes" operator="in"/>
+        </filter>
+        <polygon id="star" points="0,-10 2.35,-3.24 9.51,-3.09 3.8,1.24 5.88,8.09 0,4 -5.88,8.09 -3.8,1.24 -9.51,-3.09 -2.35,-3.24"/>
+        <path id="arcTop" d="M -122 0 A 122 122 0 0 1 122 0"/>
+        <path id="arcBottom" d="M -137 0 A 137 137 0 0 0 137 0"/>
+      </defs>
+
+      <rect width="600" height="620" fill="#24201d"/>
+
+      <g class="paper">
+        <rect x="62" y="40" width="476" height="540" fill="#f3ece0"/>
+        <text id="paperPlace" x="92" y="82" class="mono" font-size="13" font-weight="700" letter-spacing="4" fill="#3b332c">LA CASONA</text>
+        <text id="paperTable" x="508" y="82" class="mono" font-size="13" text-anchor="end" fill="#3b332c">MESA 01</text>
+        <line x1="92" y1="96" x2="508" y2="96" stroke="#3b332c" stroke-width="1"/>
+        <line x1="92" y1="532" x2="508" y2="532" stroke="#3b332c" stroke-width="1"/>
+        <text id="paperTime" x="92" y="556" class="mono" font-size="12" letter-spacing="2" fill="#3b332c">LLEGADA 00:00</text>
+        <text x="508" y="556" class="mono" font-size="12" letter-spacing="2" text-anchor="end" fill="#3b332c">CHECK-IN QR</text>
+
+        <!-- Impresión -->
+        <g transform="translate(300 318)">
+          <g class="imprint">
+            <g transform="rotate(-9)" filter="url(#ink)">
+              <circle r="172" fill="none" stroke="#c81d25" stroke-width="11"/>
+              <circle r="153" fill="none" stroke="#c81d25" stroke-width="3"/>
+              <circle r="106" fill="none" stroke="#c81d25" stroke-width="3"/>
+
+              <!-- Aro exterior -->
+              <text class="anton" font-size="26" letter-spacing="4" fill="#c81d25">
+                <textPath id="arcPlace" href="#arcTop" startOffset="50%" text-anchor="middle">LA CASONA</textPath>
+              </text>
+              <text class="anton" font-size="20" letter-spacing="3" fill="#c81d25">
+                <textPath href="#arcBottom" startOffset="50%" text-anchor="middle">★ RESERVADA PARA TI ★</textPath>
+              </text>
+
+              <!-- Centro -->
+              <g fill="#c81d25">
+                <use href="#star" transform="translate(-22 -84) scale(.7)"/>
+                <use href="#star" transform="translate(0 -88)"/>
+                <use href="#star" transform="translate(22 -84) scale(.7)"/>
+              </g>
+              <text id="greet" x="0" y="-51" class="anton" font-size="20" letter-spacing="2.5" text-anchor="middle" fill="#c81d25">BIENVENIDO A LA</text>
+
+              <polygon points="-172,-40 172,-40 154,0 172,40 -172,40 -154,0" fill="#c81d25"/>
+              <text id="tableText" x="0" y="24" class="anton" font-size="66" letter-spacing="4" text-anchor="middle" fill="#f3ece0">MESA 1</text>
+
+              <text id="msgText" x="0" y="66" class="anton" font-size="17" letter-spacing="1.5" text-anchor="middle" fill="#c81d25">DISFRUTA TU COMIDA</text>
+              <text id="dateText" x="0" y="88" class="mono" font-size="11" font-weight="700" letter-spacing="2" text-anchor="middle" fill="#c81d25">00.00.00</text>
+
+              <!-- gotas de tinta -->
+              <circle cx="186" cy="-58" r="3.5" fill="#c81d25"/>
+              <circle cx="194" cy="-44" r="2" fill="#c81d25"/>
+              <circle cx="-184" cy="70" r="2.6" fill="#c81d25"/>
+            </g>
+          </g>
+        </g>
+
+        <!-- Líneas de impacto -->
+        <g transform="translate(300 318)">
+          <g class="burst" stroke="#c81d25" stroke-width="6" stroke-linecap="round">
+            <line x1="0" y1="-196" x2="0" y2="-224"/>
+            <line x1="139" y1="-139" x2="158" y2="-158"/>
+            <line x1="196" y1="0" x2="224" y2="0"/>
+            <line x1="139" y1="139" x2="158" y2="158"/>
+            <line x1="-139" y1="139" x2="-158" y2="158"/>
+            <line x1="-196" y1="0" x2="-224" y2="0"/>
+            <line x1="-139" y1="-139" x2="-158" y2="-158"/>
+          </g>
+        </g>
+      </g>
+
+      <ellipse class="shadow" cx="300" cy="496" rx="190" ry="13" fill="#000"/>
+
+      <!-- Sello de madera -->
+      <g transform="translate(300 492)">
+        <g class="tool">
+          <ellipse cx="0" cy="-246" rx="72" ry="52" fill="#3a2a20"/>
+          <ellipse cx="-26" cy="-264" rx="20" ry="9" fill="#5c463a"/>
+          <rect x="-44" y="-202" width="88" height="14" fill="#2a1e17"/>
+          <rect x="-28" y="-188" width="56" height="90" fill="#6b4429"/>
+          <rect x="-28" y="-188" width="12" height="90" fill="#7f5334"/>
+          <rect x="-166" y="-100" width="332" height="78" fill="#9a6440"/>
+          <rect x="-166" y="-100" width="332" height="10" fill="#b57a50"/>
+          <path d="M -150 -74 C -90 -80, -40 -66, 20 -74 S 120 -80, 150 -70 M -140 -50 C -80 -56, 10 -42, 70 -52 S 130 -54, 152 -46"
+                fill="none" stroke="#7d4f31" stroke-width="2"/>
+          <rect x="-176" y="-22" width="352" height="22" fill="#c81d25"/>
+          <rect x="-176" y="-22" width="352" height="5" fill="#a3151c"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <section class="welcome" id="welcome" aria-live="polite">
+    <div class="label" id="wEyebrow">Check-in · La Casona</div>
+    <h1>Ya estás en la <span id="wTable">mesa 1</span></h1>
+    <p>Revisa el menú y pide cuando quieras, desde aquí mismo. Si necesitas algo, tu mesero está cerca.</p>
+    <div class="actions">
+      <button class="btn primary" id="menuBtn" type="button">Ver menú</button>
+      <button class="btn" id="replayBtn" type="button">Otra vez</button>
+    </div>
+  </section>
+
+  <!-- Configuración (para el restaurante) -->
+  <aside class="sheet" id="sheet" aria-label="Configurar mesa">
+    <div class="sheet-inner">
+      <div class="sheet-head">
+        <span class="label">Configurar mesa</span>
+        <button class="btn ghost label" id="closeCfg" type="button">Cerrar</button>
+      </div>
+      <div class="fields">
+        <div class="field">
+          <label class="label" for="fMesa">Mesa</label>
+          <input id="fMesa" type="text" maxlength="12" autocomplete="off">
+        </div>
+        <div class="field">
+          <label class="label" for="fLugar">Restaurante</label>
+          <input id="fLugar" type="text" maxlength="28" autocomplete="off">
+        </div>
+        <div class="field full">
+          <label class="label" for="fMsg">Mensaje de abajo</label>
+          <input id="fMsg" type="text" maxlength="28" autocomplete="off">
+        </div>
+        <div class="field full">
+          <label class="label" for="fMenu">Enlace del menú (opcional)</label>
+          <input id="fMenu" type="url" placeholder="https://..." autocomplete="off">
+        </div>
+      </div>
+      <div class="link-row">
+        <code id="linkOut"></code>
+        <button class="btn" id="copyBtn" type="button">Copiar</button>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn primary" id="applyBtn" type="button">Estampar</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const params = new URLSearchParams(location.search);
+    const state = {
+      mesa:  params.get('mesa')  || '1',
+      lugar: params.get('lugar') || 'La Casona',
+      msg:   params.get('msg')   || 'Disfruta tu comida',
+      menu:  params.get('menu')  || ''
+    };
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stage = $('stage'), welcome = $('welcome');
+    let timer, toastTimer;
+
+    function fit(el, max) {
+      el.removeAttribute('textLength');
+      el.removeAttribute('lengthAdjust');
+      if (el.getComputedTextLength() > max) {
+        el.setAttribute('textLength', max);
+        el.setAttribute('lengthAdjust', 'spacingAndGlyphs');
+      }
+    }
+
+    function render() {
+      const mesa = state.mesa.trim().toUpperCase() || '1';
+      const lugar = state.lugar.trim().toUpperCase() || 'BIENVENIDO';
+      const msg = state.msg.trim().toUpperCase();
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+
+      $('tableText').textContent = 'MESA ' + mesa;
+      $('arcPlace').textContent = lugar;
+      $('msgText').textContent = msg;
+      $('dateText').textContent = pad(now.getDate()) + '.' + pad(now.getMonth() + 1) + '.' + String(now.getFullYear()).slice(2);
+      $('paperPlace').textContent = lugar;
+      $('paperTable').textContent = 'MESA ' + (/^\d+$/.test(mesa) ? pad(mesa) : mesa);
+      $('paperTime').textContent = 'LLEGADA ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+
+      fit($('tableText'), 290);
+      fit($('msgText'), 160);
+      fit($('greet'), 176);
+      fit($('arcPlace'), 320);
+
+      $('stampSvg').setAttribute('aria-label', 'Sello: Bienvenido a la mesa ' + mesa + (msg ? '. ' + msg : ''));
+      $('wTable').textContent = 'mesa ' + state.mesa.trim();
+      $('wEyebrow').textContent = 'Check-in · ' + (state.lugar.trim() || 'Bienvenido');
+      document.title = 'Bienvenido · Mesa ' + mesa;
+      $('linkOut').textContent = buildLink();
+    }
+
+    function buildLink() {
+      const base = location.protocol.startsWith('http') ? location.origin + location.pathname : 'https://tu-restaurante.com/mesa.html';
+      const p = new URLSearchParams({ mesa: state.mesa.trim(), lugar: state.lugar.trim(), msg: state.msg.trim() });
+      if (state.menu.trim()) p.set('menu', state.menu.trim());
+      return base + '?' + p.toString();
+    }
+
+    function play() {
+      stage.classList.remove('play');
+      welcome.classList.remove('show');
+      void stage.getBoundingClientRect();
+      stage.classList.add('play');
+      clearTimeout(timer);
+      timer = setTimeout(() => welcome.classList.add('show'), reduced ? 0 : 1400);
+    }
+
+    function toast(text) {
+      const t = $('toast');
+      t.textContent = text;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+    }
+
+    // Configuración
+    const sheet = $('sheet');
+    const fields = { fMesa: 'mesa', fLugar: 'lugar', fMsg: 'msg', fMenu: 'menu' };
+    Object.entries(fields).forEach(([id, key]) => {
+      $(id).value = state[key];
+      $(id).addEventListener('input', e => { state[key] = e.target.value; render(); });
+    });
+    function openCfg() { sheet.classList.add('open'); $('fMesa').focus(); }
+    function closeCfg() { sheet.classList.remove('open'); $('openCfg').focus(); }
+    $('openCfg').addEventListener('click', openCfg);
+    $('closeCfg').addEventListener('click', closeCfg);
+    $('applyBtn').addEventListener('click', () => { sheet.classList.remove('open'); render(); play(); });
+    $('fMsg').addEventListener('keydown', e => { if (e.key === 'Enter') $('applyBtn').click(); });
+    $('fMesa').addEventListener('keydown', e => { if (e.key === 'Enter') $('applyBtn').click(); });
+
+    $('copyBtn').addEventListener('click', async () => {
+      const link = buildLink();
+      try { await navigator.clipboard.writeText(link); toast('Enlace copiado. Úsalo para el QR de esta mesa.'); }
+      catch { toast('No se pudo copiar. Selecciona el enlace a mano.'); }
+    });
+
+    $('menuBtn').addEventListener('click', () => {
+      if (state.menu.trim()) location.href = state.menu.trim();
+      else toast('Agrega el enlace del menú en "Configurar mesa".');
+    });
+    $('replayBtn').addEventListener('click', () => { render(); play(); });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && sheet.classList.contains('open')) closeCfg();
+      if ((e.key === 'r' || e.key === 'R') && e.target === document.body) { render(); play(); }
+    });
+
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { render(); play(); });
+  </script>
+</body>
+</html>

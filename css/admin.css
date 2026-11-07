@@ -1,0 +1,158 @@
+/* LA CASONA · paneles internos (mesas y cocina). Reutiliza tokens de menu-v2.css */
+.admin{padding-bottom:80px}
+.adm-top{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px var(--pad);background:var(--ink);color:var(--paper)}
+.adm-brand{font:400 26px/1 var(--f-meetu);text-decoration:none;color:var(--paper)}
+.adm-brand span{font:400 15px/1 var(--f-man);color:var(--rosa);vertical-align:.5em}
+.adm-nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.adm-nav a{flex:none;padding:9px 12px;border-radius:999px;text-decoration:none;font:400 16px/1 var(--f-barlow);letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3)}
+.adm-nav a[aria-current='page']{background:var(--paper);color:var(--ink)}
+.adm{max-width:1280px;margin:0 auto;padding:0 var(--pad)}
+.adm-hero{padding:clamp(26px,5vw,56px) 0 8px}
+.adm-eyebrow{font:400 13px/1 var(--f-anton);letter-spacing:.2em;text-transform:uppercase;color:var(--terra)}
+.adm-title{margin-top:10px;font:400 clamp(56px,13vw,128px)/.85 var(--f-meetu)}
+.adm-title em{font:700 .5em/1 var(--f-caveat);font-style:normal;color:var(--terra);vertical-align:.25em}
+.adm-lead{margin-top:14px;max-width:60ch;font:400 clamp(17px,4vw,20px)/1.45 var(--f-didone);color:var(--ink-2)}
+.adm-lead b{font-family:var(--f-man);font-weight:400;color:var(--ink)}
+.adm-stats{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:0;margin-top:22px;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--rule)}
+.adm-stats li{flex:1 1 120px;padding:12px 14px 12px 0}
+.adm-stats li+li{padding-left:14px;border-left:1px solid var(--rule)}
+.adm-stats b{display:block;font:400 44px/.9 var(--f-meetu);font-weight:400}
+.adm-stats span{font:400 14px/1.2 var(--f-barlow);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.adm-panel{margin-top:22px;padding:clamp(18px,3vw,26px);border:1.5px solid var(--ink);border-radius:22px;background:var(--card)}
+.adm-h2{font:400 clamp(26px,5.6vw,34px)/1 var(--f-man)}
+.adm-add,.adm-row{display:grid;gap:12px;margin-top:14px}
+@media(min-width:820px){.adm-add{grid-template-columns:1fr 1fr 1.4fr auto;align-items:end}.adm-row{grid-template-columns:1fr auto;align-items:end}.adm-add .btn,.adm-row .btn{width:auto;min-width:150px}}
+.adm-add .field,.adm-row .field{margin:0}
+.adm-hint{margin-top:10px;font-size:14px;color:var(--ink-3)}
+.adm-warn{margin-top:12px;padding:12px 14px;border-radius:12px;background:#f6dccd;color:var(--terra-2);font-size:15px;line-height:1.4}
+.adm-listhead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:36px;padding-bottom:12px;border-bottom:1.5px solid var(--ink)}
+.adm-tools{display:flex;flex-wrap:wrap;gap:8px}
+.adm-tools .btn{width:auto;min-height:48px;font-size:17px;padding:10px 16px}
+.adm-tools .btn:disabled{opacity:.4;cursor:not-allowed}
+.adm-filter .input{min-height:48px;padding:10px 12px;font-size:16px}
+.adm-empty{padding:36px 0;text-align:center;font:600 24px/1.2 var(--f-caveat);color:var(--ink-3)}
+.adm-empty .btn{width:auto;display:inline-flex;margin-top:14px}
+
+/* Acceso del equipo */
+.gate{min-height:calc(100vh - 64px);display:grid;place-items:center;padding:28px var(--pad)}
+.gate[hidden]{display:none}
+.gate-card{width:min(440px,100%);padding:clamp(22px,5vw,34px);border:1.5px solid var(--ink);border-radius:26px;background:var(--card);box-shadow:8px 8px 0 var(--ink)}
+.gate-brand{font:400 30px/1 var(--f-meetu);margin-bottom:18px}
+.gate-brand span{font:400 16px/1 var(--f-man);color:var(--terra);vertical-align:.5em}
+.gate-title{margin:8px 0 12px;font:400 clamp(44px,11vw,64px)/.9 var(--f-man)}
+.gate-text{font:400 18px/1.45 var(--f-didone);color:var(--ink-2);margin-bottom:14px}
+.gate-text code,.adm code{font:400 .85em/1 ui-monospace,monospace;background:var(--paper-2);padding:2px 6px;border-radius:6px}
+.gate-form{display:grid;gap:4px}
+.gate-err{margin:4px 0 10px;padding:10px 12px;border-radius:12px;background:#f6dccd;color:var(--terra-2);font-size:15px;line-height:1.35}
+.gate-err[hidden]{display:none}
+.gate-links{margin-top:12px;text-align:center}
+.gate-card .btn{margin-top:6px}
+.adm-user{display:flex;align-items:center;gap:10px;margin-left:auto;font:400 14px/1.1 var(--f-barlow);letter-spacing:.06em;color:var(--paper-3)}
+.adm-user span{display:none;text-align:right}
+.adm-user small{display:block;color:var(--rosa);text-transform:uppercase;letter-spacing:.14em;font-size:11px}
+.adm-user button{min-height:38px;padding:8px 12px;border:1.5px solid var(--paper-3);border-radius:999px;background:transparent;color:var(--paper);font:400 14px/1 var(--f-barlow);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+@media(min-width:900px){.adm-user span{display:block}}
+
+/* Carta y datos */
+.adm-cfg{display:grid;gap:4px 16px;margin-top:14px}
+@media(min-width:820px){.adm-cfg{grid-template-columns:1fr 1fr}.adm-cfg .btn{grid-column:1/-1;width:auto;justify-self:start;min-width:200px}}
+.adm-check{display:flex;align-items:center;gap:10px;min-height:48px;font:400 17px/1.2 var(--f-didone)}
+.adm-check input{width:22px;height:22px;accent-color:var(--terra)}
+.carta-cat{margin-top:26px}
+.carta-cat h3{font:400 30px/1 var(--f-man);padding-bottom:8px;border-bottom:1px solid var(--rule)}
+.carta-cat h3 small{font:400 13px/1 var(--f-anton);letter-spacing:.16em;text-transform:uppercase;color:var(--terra)}
+.carta-list{list-style:none;padding:0}
+.carta-item{display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:center;padding:12px 0;border-bottom:1px dashed var(--rule)}
+.carta-name{font:400 19px/1.2 var(--f-didone)}
+.carta-price{display:flex;align-items:center;gap:4px;font:400 20px/1 var(--f-barlow)}
+.carta-price .input{width:104px;min-height:44px;padding:8px 10px;font-size:18px;text-align:right}
+.carta-tg{display:inline-flex;align-items:center;gap:8px;font:400 15px/1 var(--f-barlow);letter-spacing:.06em;text-transform:uppercase}
+.carta-tg input{width:20px;height:20px;accent-color:var(--terra)}
+.carta-item.is-out .carta-name{text-decoration:line-through;opacity:.55}
+.carta-item.is-hidden{opacity:.5}
+@media(min-width:760px){.carta-item{grid-template-columns:1fr auto auto auto}}
+.adm-filter input.input{min-height:48px;padding:10px 12px;font-size:16px}
+
+/* Tarjetas de mesa */
+.mesas{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;margin-top:18px}
+.mesa{position:relative;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;padding:16px;border:1.5px solid var(--ink);border-radius:20px;background:var(--card);transition:opacity .15s}
+.mesa.is-off{background:var(--paper-2)}
+.mesa.is-off .mesa-qr{opacity:.35;filter:grayscale(1)}
+.mesa-sel{position:absolute;top:12px;right:12px;width:22px;height:22px;accent-color:var(--terra)}
+.mesa-qr{grid-row:1/4;width:108px;padding:6px;background:#fff;border:1.5px solid var(--ink);border-radius:12px}
+.mesa-qr svg{display:block;width:100%;height:auto}
+.mesa-num{display:flex;align-items:baseline;gap:6px;padding-right:28px}
+.mesa-num small{font:400 18px/1 var(--f-man)}
+.mesa-num b{font:400 56px/.85 var(--f-meetu);font-weight:400}
+.mesa-meta{font:400 15px/1.3 var(--f-barlow);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);min-height:20px}
+.mesa-meta i{font:700 17px/1 var(--f-caveat);letter-spacing:0;text-transform:none;font-style:normal;color:var(--terra)}
+.mesa-switch{display:flex;align-items:center;gap:10px;cursor:pointer;align-self:end;font:400 16px/1 var(--f-barlow);letter-spacing:.06em;text-transform:uppercase}
+.mesa-switch input{position:absolute;opacity:0;width:1px;height:1px}
+.mesa-switch .track{position:relative;width:52px;height:30px;border-radius:999px;background:var(--rule);border:1.5px solid var(--ink);transition:background .15s steps(2,end)}
+.mesa-switch .track::after{content:'';position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:var(--card);border:1.5px solid var(--ink);transition:left .15s steps(2,end)}
+.mesa-switch input:checked+.track{background:var(--patio-2)}
+.mesa-switch input:checked+.track::after{left:24px}
+.mesa-switch input:focus-visible+.track{outline:2.5px solid var(--terra);outline-offset:3px}
+.mesa-actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--rule)}
+.mesa-actions button,.mesa-actions a{flex:1 1 auto;min-height:40px;padding:8px 10px;border:1.5px solid var(--ink);border-radius:12px;background:transparent;font:400 15px/1 var(--f-barlow);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;color:var(--ink);text-align:center;display:inline-flex;align-items:center;justify-content:center}
+.mesa-actions button:hover,.mesa-actions a:hover{background:var(--paper-2)}
+.mesa-actions .danger{border-color:#b3261e;color:#b3261e}
+
+/* Hoja de impresión */
+.print-sheet{display:none}
+.pcard{display:flex;flex-direction:column;align-items:center;text-align:center;padding:9mm 7mm;border:1.5px solid #1d1813;border-radius:7mm;break-inside:avoid;page-break-inside:avoid;background:#fff;color:#1d1813;position:relative}
+.pcard-brand{font:400 26pt/.9 var(--f-meetu)}
+.pcard-brand span{font:400 12pt/1 var(--f-man);color:#8e3c1b;vertical-align:.6em}
+.pcard-rule{width:100%;height:0;border-top:1.2pt solid #1d1813;margin:4mm 0 3mm}
+.pcard-mesa{display:flex;align-items:baseline;gap:3mm}
+.pcard-mesa small{font:400 18pt/1 var(--f-man)}
+.pcard-mesa b{font:400 58pt/.85 var(--f-meetu);font-weight:400}
+.pcard-zona{font:400 10pt/1 var(--f-anton);letter-spacing:.2em;text-transform:uppercase;color:#8e3c1b;min-height:10pt}
+.pcard-qr{width:46mm;margin:4mm 0 3mm}
+.pcard-qr svg{display:block;width:100%;height:auto}
+.pcard-hand{font:700 17pt/1.05 var(--f-caveat);color:#2f6b3f;rotate:-3deg}
+.pcard-steps{margin-top:2mm;font:400 10.5pt/1.3 var(--f-barlow);letter-spacing:.14em;text-transform:uppercase}
+.pcard .star{position:absolute;top:5mm;right:6mm;width:8mm;height:8mm;color:#b4532a}
+@media print{
+  @page{size:letter;margin:10mm}
+  body.admin{background:#fff;padding:0}
+  body::before,.adm-top,.adm,.toast,dialog{display:none!important}
+  .print-sheet{display:grid;grid-template-columns:repeat(2,1fr);gap:8mm}
+}
+
+/* ---------- Cocina ---------- */
+.kds-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;padding:clamp(20px,4vw,36px) 0 14px;border-bottom:1.5px solid var(--ink)}
+.kds-title{font:400 clamp(52px,11vw,104px)/.85 var(--f-meetu)}
+.kds-live{display:flex;align-items:center;gap:10px;font:400 15px/1.2 var(--f-barlow);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.kds-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.kds-tools .btn{width:auto;min-height:46px;font-size:16px;padding:10px 14px}
+.kds-board{display:grid;gap:18px;margin-top:20px}
+@media(min-width:1000px){.kds-board{grid-template-columns:repeat(4,minmax(0,1fr));align-items:start}}
+.kds-col{min-width:0}
+.kds-colhead{display:flex;align-items:baseline;justify-content:space-between;padding:0 2px 10px;border-bottom:1px solid var(--rule)}
+.kds-colhead h2{font:400 26px/1 var(--f-man)}
+.kds-colhead span{font:400 30px/1 var(--f-meetu)}
+.kds-list{display:grid;gap:12px;margin-top:12px}
+.kds-empty{padding:18px 0;font:600 20px/1.2 var(--f-caveat);color:var(--ink-3)}
+.order{border:1.5px solid var(--ink);border-radius:18px;background:var(--card);overflow:hidden}
+.order.is-new{box-shadow:5px 5px 0 var(--terra)}
+.order-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:var(--ink);color:var(--paper)}
+.order-where{font:400 26px/1 var(--f-man)}
+.order-where small{display:block;margin-top:3px;font:400 12px/1 var(--f-anton);letter-spacing:.16em;text-transform:uppercase;color:var(--rosa)}
+.order-time{text-align:right;font:400 22px/1 var(--f-barlow);font-variant-numeric:tabular-nums}
+.order-time small{display:block;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-3)}
+.order-time.late{color:var(--mostaza)}
+.order-body{padding:12px 14px}
+.order-lines{list-style:none;padding:0}
+.order-lines li{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;padding:6px 0;border-bottom:1px dashed var(--rule)}
+.order-lines li:last-child{border-bottom:0}
+.order-lines .q{font:400 24px/1 var(--f-man);color:var(--terra-2)}
+.order-lines .n{font:400 20px/1.2 var(--f-didone)}
+.order-lines .s{grid-column:2;font:400 16px/1.3 var(--f-barlow);color:var(--ink-2)}
+.order-lines .s b{font-weight:400;color:var(--terra-2)}
+.order-note{margin-top:8px;padding:8px 10px;border-radius:10px;background:#f6e6c9;font:600 18px/1.2 var(--f-caveat)}
+.order-info{margin-top:8px;font:400 15px/1.4 var(--f-barlow);letter-spacing:.02em;color:var(--ink-2)}
+.order-foot{display:flex;gap:8px;padding:0 14px 14px}
+.order-foot .btn{min-height:50px;font-size:17px}
+.order-foot .btn--ghost{flex:0 0 auto;width:auto;padding:10px 14px}
+.order-folio{padding:0 14px 10px;font:400 13px/1 var(--f-barlow);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}

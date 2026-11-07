@@ -1,0 +1,9 @@
+/* Controles de trabajo: no forman parte de la portada ni de su exportación. */
+.portada-tools{max-width:900px;margin:36px auto;padding:22px var(--pad);font:400 15px/1.6 system-ui,sans-serif;color:var(--ink-2)}
+.portada-tools-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:14px 0}
+.portada-tools label{font-weight:700}
+.portada-tools select,.portada-tools button{min-height:44px;padding:10px 14px;border:1px solid var(--ink);border-radius:8px;background:var(--paper);font:inherit;color:var(--ink)}
+.portada-tools button{background:var(--ink);color:var(--paper);cursor:pointer}
+.portada-tools button:disabled{opacity:.6;cursor:wait}
+#portadaStatus{font-size:13px}
+@media(max-width:520px){.portada-tools button{width:100%}}

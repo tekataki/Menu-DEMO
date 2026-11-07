@@ -1,0 +1,47 @@
+/* Extraído exclusivamente del sello aportado. Selectores y nombres de
+   keyframes aislados para no alterar el resto del menú. Geometría, colores,
+   proporciones, tiempos y curvas de la animación original se conservan. */
+.mesa-stamp{position:relative;justify-self:center;width:clamp(190px,56vw,260px);max-width:100%;aspect-ratio:1;background:none;border:0;box-shadow:none}
+.mesa-stamp>svg{display:block;width:100%;height:auto}
+@media(min-width:900px){.mode--mesa .mesa-stamp{grid-row:1/3;width:280px}}
+.mesa-stamp .anton{font-family:'Anton C',Impact,'Arial Narrow',sans-serif}
+.mesa-stamp .mono{font-family:'Space Mono','Courier New',monospace}
+.mesa-stamp .tool,.mesa-stamp .imprint,.mesa-stamp .burst,.mesa-stamp .stamp-impact{transform-box:fill-box}
+.mesa-stamp .tool{transform-origin:50% 100%;transform:translateY(-720px)}
+.mesa-stamp .imprint{transform-origin:50% 50%;opacity:0}
+.mesa-stamp .burst{transform-origin:50% 50%;opacity:0}
+.mesa-stamp .stamp-impact{transform-origin:50% 50%;transform:rotate(1.5deg)}
+.mesa-stamp.play .tool{animation:mesa-tool 1.8s .2s both}
+.mesa-stamp.play .imprint{animation:mesa-imprint 1.8s .2s both}
+.mesa-stamp.play .burst{animation:mesa-burst 1.8s .2s both}
+.mesa-stamp.play .stamp-impact{animation:mesa-shake 1.8s .2s both}
+@keyframes mesa-tool{
+  0%{transform:translateY(-720px) scaleY(1);animation-timing-function:cubic-bezier(.55,0,.9,.4)}
+  36%{transform:translateY(0) scaleY(1)}
+  40%{transform:translateY(0) scaleY(.9)}
+  46%{transform:translateY(0) scaleY(1.02)}
+  52%{transform:translateY(0) scaleY(1);animation-timing-function:cubic-bezier(.3,0,.6,1)}
+  100%{transform:translateY(-720px) scaleY(1)}
+}
+@keyframes mesa-imprint{
+  0%,37%{opacity:0;transform:scale(1.08)}
+  38%{opacity:1;transform:scale(1.05)}
+  56%,100%{opacity:1;transform:scale(1)}
+}
+@keyframes mesa-burst{
+  0%,37%{opacity:0;transform:scale(.8)}
+  40%{opacity:1;transform:scale(.95)}
+  65%,100%{opacity:0;transform:scale(1.25)}
+}
+@keyframes mesa-shake{
+  0%,37%{transform:translate(0,0) rotate(1.5deg)}
+  38%{transform:translate(0,5px) rotate(1.5deg)}
+  41%{transform:translate(0,-3px) rotate(1.5deg)}
+  44%{transform:translate(0,1px) rotate(1.5deg)}
+  47%,100%{transform:translate(0,0) rotate(1.5deg)}
+}
+@media(prefers-reduced-motion:reduce){
+  .mesa-stamp .tool,.mesa-stamp .burst{display:none}
+  .mesa-stamp.play .imprint{animation:none;opacity:1}
+  .mesa-stamp.play .stamp-impact{animation:none}
+}

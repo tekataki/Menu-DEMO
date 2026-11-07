@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Mesas y QR · La Casona</title>
+<link rel="stylesheet" href="css/menu-v2.css">
+<link rel="stylesheet" href="css/admin.css">
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js" defer></script>
+<script src="js/vendor/supabase-js-2.57.4.js" defer></script>
+<script src="js/cloud.js" defer></script>
+<script src="js/v2/staff.js" defer></script>
+<script src="js/v2/mesas-admin.js" defer></script>
+</head>
+<body class="admin">
+<svg class="defs" aria-hidden="true" width="0" height="0"><defs>
+  <symbol id="d-star" viewBox="0 0 40 40"><path d="M20 3c1 9 3 14 17 17-14 2-16 7-17 17-2-10-4-15-17-17 13-3 15-8 17-17z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></symbol>
+</defs></svg>
+
+<header class="adm-top">
+  <a class="adm-brand" href="menuV2.html"><span>La</span> Casona</a>
+  <nav class="adm-nav" aria-label="Administración">
+    <a href="mesas.html" aria-current="page" data-admin>Mesas y QR</a>
+    <a href="carta.html" data-admin>Carta</a>
+    <a href="cocina.html">Cocina</a>
+    <a href="menuV2.html">Menú</a>
+  </nav>
+</header>
+
+<section class="gate" id="gate" aria-live="polite"></section>
+
+<main class="adm" id="app" hidden>
+  <section class="adm-hero">
+    <p class="adm-eyebrow">Administración</p>
+    <h1 class="adm-title">Mesas <em>y</em> QR</h1>
+    <p class="adm-lead">Cada mesa tiene su propio QR. Al escanearlo, el menú abre en <b>pedido en local</b> con esa mesa asignada. Si desactivas una mesa, su QR deja de aceptar pedidos al instante.</p>
+    <ul class="adm-stats" id="stats" aria-live="polite"></ul>
+  </section>
+
+  <section class="adm-panel" aria-labelledby="addTitle">
+    <h2 class="adm-h2" id="addTitle">Agregar mesas</h2>
+    <form class="adm-add" id="addForm">
+      <label class="field"><span class="label">Desde la mesa</span><input class="input" name="desde" type="number" min="1" max="999" required></label>
+      <label class="field"><span class="label">Hasta la mesa <em>opcional</em></span><input class="input" name="hasta" type="number" min="1" max="999" placeholder="Solo una"></label>
+      <label class="field"><span class="label">Zona <em>opcional</em></span><input class="input" name="zona" maxlength="30" placeholder="Patio, Salón, Terraza…" list="zonas"></label>
+      <button class="btn" type="submit" id="addBtn">Crear</button>
+    </form>
+    <datalist id="zonas"></datalist>
+    <p class="adm-hint">Puedes crear una mesa o un rango (ej. 1 a 15). Los números repetidos se saltan.</p>
+  </section>
+
+  <section class="adm-panel" aria-labelledby="printTitle">
+    <h2 class="adm-h2" id="printTitle">Dirección del menú en los QR</h2>
+    <div class="adm-row">
+      <label class="field"><span class="label">Dirección pública de menuV2.html</span>
+        <input class="input" id="baseUrl" type="url" inputmode="url" placeholder="https://tu-sitio.com/menuV2.html"></label>
+      <button class="btn btn--ghost" type="button" id="applyBase">Guardar</button>
+    </div>
+    <p class="adm-warn" id="previewWarn" hidden>Estás usando una dirección de vista previa. Escribe la dirección pública definitiva antes de imprimir: los QR impresos llevan esta dirección.</p>
+  </section>
+
+  <section aria-labelledby="listTitle">
+    <div class="adm-listhead">
+      <h2 class="adm-h2" id="listTitle">Tus mesas</h2>
+      <div class="adm-tools">
+        <label class="adm-filter"><span class="vh">Filtrar</span>
+          <select class="input" id="filter"><option value="all">Todas</option><option value="on">Activas</option><option value="off">Desactivadas</option></select></label>
+        <button class="btn btn--ghost" type="button" id="printSel" disabled>Imprimir seleccionadas</button>
+        <button class="btn" type="button" id="printAll">Imprimir todas</button>
+      </div>
+    </div>
+    <div id="list" class="mesas" aria-live="polite"><p class="adm-empty">Cargando mesas…</p></div>
+  </section>
+</main>
+
+<div class="print-sheet" id="printSheet" aria-hidden="true"></div>
+
+<dialog class="sheet" id="editSheet" aria-labelledby="editTitle">
+  <form class="sheet-inner" id="editForm" method="dialog">
+    <div class="sheet-head"><p class="sheet-eyebrow">Editar</p><h2 class="sheet-title" id="editTitle">Mesa</h2>
+      <button class="sheet-close" type="button" data-close aria-label="Cerrar"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4l12 12M16 4L4 16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button></div>
+    <div class="sheet-body">
+      <label class="field"><span class="label">Número</span><input class="input" name="numero" type="number" min="1" max="999" required><span class="err">Ese número ya existe o no es válido.</span></label>
+      <label class="field"><span class="label">Zona <em>opcional</em></span><input class="input" name="zona" maxlength="30" list="zonas"></label>
+      <label class="field"><span class="label">Nota visible <em>opcional</em></span><input class="input" name="nota" maxlength="30" placeholder="Ej. Junto a la fuente"></label>
+    </div>
+    <div class="sheet-foot"><button class="btn" type="submit" value="save">Guardar cambios</button></div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
